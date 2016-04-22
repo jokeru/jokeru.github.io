@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Google DNS Down - 18 March 2016 &mdash; wiki'd</title>
+  <meta name="author" content="JoKeru">
+
+
+
+
+
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link href="./favicon.png" rel="icon">
+
+  <link href="./theme/css/main.css" media="screen, projection"
+        rel="stylesheet" type="text/css">
+
+  <link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic"
+        rel="stylesheet" type="text/css">
+  <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic"
+        rel="stylesheet" type="text/css">
+</head>
+
+<body>
+  <header role="banner"><hgroup>
+  <h1><a href="./">wiki'd</a></h1>
+    <h2>by JoKeru</h2>
+</hgroup></header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+</ul>
+
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value=".">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+
+<ul class="main-navigation">
+      <li class="active">
+        <a href="./category/sysadmin.html">Sysadmin</a>
+      </li>
+</ul></nav>
+  <div id="main">
+    <div id="content">
+<div>
+  <article class="hentry" role="article">
+<header>
+      <h1 class="entry-title">Google DNS Down - 18 March 2016</h1>
+    <p class="meta">
+<time datetime="2016-03-18T09:30:00+00:00" pubdate>Fri 18 March 2016</time>    </p>
+</header>
+
+  <div class="entry-content"><p>If you're using the Google DNSs 8.8.8.8 and 8.8.4.4, you might have an issue and you don't know about it :)</p>
+<h3>Here is what happened:</h3>
+<ul>
+<li>I have some servers configured to use these DNSs (and I've been using them for ages now)</li>
+<li>I have some scripts fetching API data using linux cURL</li>
+<li>these scripts are sending alarms in case of failure - Monitoring is important !<ul>
+<li>and this morning my inbox was full of alarms</li>
+</ul>
+</li>
+</ul>
+<p>I've quickly pinpointed the cause of the errors:</p>
+<div class="highlight"><pre><span></span><span class="gp">root@node-115:/#</span> curl google.com -v
+<span class="go">* getaddrinfo(3) failed for google.com:80</span>
+<span class="go">* Couldn&#39;t resolve host &#39;google.com&#39;</span>
+<span class="go">* Closing connection #0</span>
+<span class="go">curl: (6) Couldn&#39;t resolve host &#39;google.com&#39;</span>
+</pre></div>
+
+
+<p>Hmmm, Google couldn't resolve google.</p>
+<p>But running a dig command, it worked:</p>
+<div class="highlight"><pre><span></span><span class="gp">root@node-115:/#</span> dig google.com @8.8.4.4
+<span class="go">;; Truncated, retrying in TCP mode.</span>
+
+<span class="go">; &lt;&lt;&gt;&gt; DiG 9.8.4-rpz2+rl005.12-P1 &lt;&lt;&gt;&gt; google.com @8.8.4.4  </span>
+<span class="go">;; global options: +cmd  </span>
+<span class="go">;; Got answer:  </span>
+<span class="go">;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 717  </span>
+<span class="go">;; flags: qr rd ra; QUERY: 1, ANSWER: 11, AUTHORITY: 0, ADDITIONAL: 0</span>
+
+<span class="go">;; QUESTION SECTION:  </span>
+<span class="go">;google.com. IN A</span>
+
+<span class="go">;; ANSWER SECTION:  </span>
+<span class="go">google.com. 299 IN A 173.194.123.72  </span>
+<span class="go">google.com. 299 IN A 173.194.123.78  </span>
+<span class="go">google.com. 299 IN A 173.194.123.67  </span>
+<span class="go">google.com. 299 IN A 173.194.123.69  </span>
+<span class="go">google.com. 299 IN A 173.194.123.68  </span>
+<span class="go">google.com. 299 IN A 173.194.123.64  </span>
+<span class="go">google.com. 299 IN A 173.194.123.66  </span>
+<span class="go">google.com. 299 IN A 173.194.123.70  </span>
+<span class="go">google.com. 299 IN A 173.194.123.73  </span>
+<span class="go">google.com. 299 IN A 173.194.123.65  </span>
+<span class="go">google.com. 299 IN A 173.194.123.71</span>
+
+<span class="go">;; Query time: 25 msec  </span>
+<span class="go">;; SERVER: 8.8.4.4#53(8.8.4.4)  </span>
+<span class="go">;; WHEN: Fri Mar 18 06:46:38 2016  </span>
+<span class="go">;; MSG SIZE rcvd: 204  </span>
+</pre></div>
+
+
+<p>dig also revealed an issue: <code>Truncated, retrying in TCP mode</code>, but I didn't notice it at that time</p>
+<p>Here is the tcpdump capture when running the dig command:  </p>
+<div class="highlight"><pre><span></span><span class="go">06:46:38.152851 IP x.x.x.x.33479 &gt; 8.8.4.4.53: 59819+ A? google.com. (28)</span>
+<span class="go">06:46:38.176171 IP 8.8.4.4.53 &gt; x.x.x.x.33479: 59819-| 0/0/0 (28)</span>
+<span class="go">06:46:38.176431 IP x.x.x.x.49300 &gt; 8.8.4.4.53: Flags [S], seq 664740351, win 14600, options [mss 1460,sackOK,TS val 4082166890 ecr 0,nop,wscale 9], length 0</span>
+<span class="go">06:46:38.199615 IP 8.8.4.4.53 &gt; x.x.x.x.49300: Flags [S.], seq 4111433272, ack 664740352, win 42540, options [mss 1430,sackOK,TS val 1427658912 ecr 4082166890,nop,wscale 7], length 0</span>
+<span class="go">06:46:38.199646 IP x.x.x.x.49300 &gt; 8.8.4.4.53: Flags [.], ack 1, win 29, options [nop,nop,TS val 4082166895 ecr 1427658912], length 0</span>
+<span class="go">06:46:38.199753 IP x.x.x.x.49300 &gt; 8.8.4.4.53: Flags [P.], seq 1:31, ack 1, win 29, options [nop,nop,TS val 4082166895 ecr 1427658912], length 30717+ A? google.com. (28)</span>
+<span class="go">06:46:38.222951 IP 8.8.4.4.53 &gt; x.x.x.x.49300: Flags [.], ack 31, win 333, options [nop,nop,TS val 1427658935 ecr 4082166895], length 0</span>
+<span class="go">06:46:38.225278 IP 8.8.4.4.53 &gt; x.x.x.x.49300: Flags [P.], seq 1:207, ack 31, win 333, options [nop,nop,TS val 1427658938 ecr 4082166895], length 206717 11/0/0 A 173.194.123.72, A 173.194.123.78, A 173.194.123.67, A 173.194.123.69, A 173.194.123.68, A 173.194.123.64, A 173.194.123.66, A 173.194.123.70, A 173.194.123.73, A 173.194.123.65, A 173.194.123.71 (204)</span>
+<span class="go">06:46:38.225302 IP x.x.x.x.49300 &gt; 8.8.4.4.53: Flags [.], ack 207, win 31, options [nop,nop,TS val 4082166902 ecr 1427658938], length 0</span>
+<span class="go">06:46:38.225723 IP x.x.x.x.49300 &gt; 8.8.4.4.53: Flags [F.], seq 31, ack 207, win 31, options [nop,nop,TS val 4082166902 ecr 1427658938], length 0</span>
+<span class="go">06:46:38.248930 IP 8.8.4.4.53 &gt; x.x.x.x.49300: Flags [F.], seq 207, ack 32, win 333, options [nop,nop,TS val 1427658961 ecr 4082166902], length 0</span>
+<span class="go">06:46:38.248959 IP x.x.x.x.49300 &gt; 8.8.4.4.53: Flags [.], ack 208, win 31, options [nop,nop,TS val 4082166908 ecr 1427658961], length 0</span>
+</pre></div>
+
+
+<p>The first 2 lines are for the UDP request, and we can see the reply we get is <code>0/0/0</code> and then it's switching to TCP.</p>
+<p>And here is the tcpdump capture when running the curl command:</p>
+<div class="highlight"><pre><span></span><span class="go">06:47:16.561123 IP x.x.x.x.56375 &gt; 8.8.4.4.53: 52634+ A? google.com. (28)</span>
+<span class="go">06:47:16.561137 IP x.x.x.x.56375 &gt; 8.8.4.4.53: 42403+ AAAA? google.com. (28)</span>
+<span class="go">06:47:16.584480 IP 8.8.4.4.53 &gt; x.x.x.x.56375: 52634-| 0/0/0 (28)</span>
+<span class="go">06:47:16.584498 IP 8.8.4.4.53 &gt; x.x.x.x.56375: 42403-| 0/0/0 (28)</span>
+<span class="go">06:47:16.584590 IP x.x.x.x.48556 &gt; 8.8.4.4.53: 52634+ A? google.com. (28)</span>
+<span class="go">06:47:16.584606 IP x.x.x.x.48556 &gt; 8.8.4.4.53: 42403+ AAAA? google.com. (28)</span>
+<span class="go">06:47:16.607671 IP 8.8.4.4.53 &gt; x.x.x.x.48556: 52634-| 0/0/0 (28)</span>
+<span class="go">06:47:16.607731 IP 8.8.4.4.53 &gt; x.x.x.x.48556: 42403-| 0/0/0 (28)</span>
+<span class="go">06:47:16.607781 IP x.x.x.x.55720 &gt; 8.8.4.4.53: 54224+ A? google.com. (28)</span>
+<span class="go">06:47:16.607793 IP x.x.x.x.55720 &gt; 8.8.4.4.53: 3857+ AAAA? google.com. (28)</span>
+<span class="go">06:47:16.630826 IP 8.8.4.4.53 &gt; x.x.x.x.55720: 3857-| 0/0/0 (28)</span>
+<span class="go">06:47:16.630913 IP x.x.x.x.58704 &gt; 8.8.4.4.53: 54224+ A? google.com. (28)</span>
+<span class="go">06:47:16.630928 IP x.x.x.x.58704 &gt; 8.8.4.4.53: 3857+ AAAA? google.com. (28)</span>
+<span class="go">06:47:16.630945 IP 8.8.4.4.53 &gt; x.x.x.x.55720: 54224-| 0/0/0 (28)</span>
+<span class="go">06:47:16.654146 IP 8.8.4.4.53 &gt; x.x.x.x.58704: 3857-| 0/0/0 (28)</span>
+<span class="go">06:47:16.654164 IP 8.8.4.4.53 &gt; x.x.x.x.58704: 54224-| 0/0/0 (28)</span>
+</pre></div>
+
+
+<h2>Conclusion:</h2>
+<ol>
+<li>cURL uses UDP-only when resolving the URLs  </li>
+<li>Google DNSs - or at least the ones in my geo area (see traceroute below) are not serving requests over UDP  </li>
+<li>switching to a different resolver, OpenDNS for example (208.67.222.222 and 208.67.220.220), fixed my problem until Google fixes theirs</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="gp">root@node-115:/#</span> traceroute 8.8.8.8
+<span class="go">traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets</span>
+<span class="go">1 10.8.13.9 (10.8.13.9) 0.764 ms 1.326 ms 1.376 ms</span>
+<span class="go">2 10.8.34.253 (10.8.34.253) 0.625 ms 0.687 ms 0.687 ms</span>
+<span class="go">3 10.8.40.233 (10.8.40.233) 0.144 ms 10.8.40.229 (10.8.40.229) 0.187 ms 10.8.40.233 (10.8.40.233) 1.917 ms</span>
+<span class="go">4 10.8.25.197 (10.8.25.197) 0.212 ms 0.221 ms 0.257 ms</span>
+<span class="go">5 207.86.156.45 (207.86.156.45) 15.464 ms 207.86.157.49 (207.86.157.49) 0.286 ms 207.86.156.45 (207.86.156.45) 15.450 ms</span>
+<span class="go">6 216.156.1.126.ptr.us.xo.net (216.156.1.126) 13.294 ms 13.264 ms 216.156.0.253.ptr.us.xo.net (216.156.0.253) 15.731 ms</span>
+<span class="go">7 ae0d0.cir1.chicago2-il.us.xo.net (207.88.13.250) 13.134 ms 13.102 ms 12.952 ms</span>
+<span class="go">8 216.1.94.142 (216.1.94.142) 13.133 ms 13.267 ms ae0d0.cir1.chicago2-il.us.xo.net (207.88.13.250) 13.014 ms</span>
+<span class="go">9 216.1.94.142 (216.1.94.142) 13.259 ms 209.85.143.154 (209.85.143.154) 13.163 ms 209.85.143.186 (209.85.143.186) 13.102 ms</span>
+<span class="go">10 209.85.241.47 (209.85.241.47) 13.899 ms 209.85.254.128 (209.85.254.128) 13.873 ms 209.85.254.120 (209.85.254.120) 13.692 ms</span>
+<span class="go">11 72.14.233.68 (72.14.233.68) 13.449 ms 209.85.247.10 (209.85.247.10) 23.052 ms 22.934 ms</span>
+<span class="go">12 72.14.234.81 (72.14.234.81) 24.983 ms 216.239.47.45 (216.239.47.45) 23.377 ms 209.85.247.4 (209.85.247.4) 23.355 ms</span>
+<span class="go">13 216.239.49.25 (216.239.49.25) 23.135 ms 72.14.234.81 (72.14.234.81) 24.944 ms 216.239.43.219 (216.239.43.219) 23.540 ms</span>
+<span class="go">14 google-public-dns-a.google.com (8.8.8.8) 23.089 ms 23.088 ms *</span>
+</pre></div>
+
+
+<blockquote>
+<p>there are other people complaining also @<a href="https://twitter.com/search?q=google%20dns">https://twitter.com/search?q=google%20dns</a></p>
+</blockquote></div>
+    <footer>
+<p class="meta">
+  <span class="byline author vcard">
+    Posted by <span class="fn">
+        jokeru
+    </span>
+  </span>
+<time datetime="2016-03-18T09:30:00+00:00" pubdate>Fri 18 March 2016</time>  <span class="categories">
+    <a class='category' href='./category/sysadmin.html'>sysadmin</a>
+  </span>
+  <span class="categories">
+    <a class="category" href="./tag/linux.html">linux</a>,    <a class="category" href="./tag/google.html">google</a>,    <a class="category" href="./tag/dns.html">dns</a>,    <a class="category" href="./tag/down.html">down</a>,    <a class="category" href="./tag/curl.html">curl</a>,    <a class="category" href="./tag/tcpdump.html">tcpdump</a>  </span>
+</p><div class="sharing">
+</div>    </footer>
+  </article>
+
+</div>
+<aside class="sidebar">
+  <section>
+    <h1>Recent Posts</h1>
+    <ul id="recent_posts">
+      <li class="post">
+          <a href="./how-to-it-s-time-to-drop-wordpress-say-hello-to-my-pelican.html">It's time to drop WordPress, say hello to my Pelican</a>
+      </li>
+      <li class="post">
+          <a href="./google-dns-down-18-march-2016.html">Google DNS Down - 18 March 2016</a>
+      </li>
+    </ul>
+  </section>
+  <section>
+      
+    <h1>Categories</h1>
+    <ul id="recent_posts">
+        <li><a href="./category/sysadmin.html">sysadmin</a></li>
+    </ul>
+  </section>
+ 
+
+  <section>
+  <h1>Tags</h1>
+    <a href="./tag/pelican.html">pelican</a>,    <a href="./tag/markdown.html">markdown</a>,    <a href="./tag/octopress.html">octopress</a>,    <a href="./tag/down.html">down</a>,    <a href="./tag/github-pages.html">github pages</a>,    <a href="./tag/google.html">google</a>,    <a href="./tag/wordpress.html">wordpress</a>,    <a href="./tag/dns.html">dns</a>,    <a href="./tag/linux.html">linux</a>,    <a href="./tag/curl.html">curl</a>,    <a href="./tag/tcpdump.html">tcpdump</a>  </section>
+
+
+
+</aside>    </div>
+  </div>
+  <footer role="contentinfo"><p>
+    Copyright &copy;  2016  JoKeru &mdash;
+  <span class="credit">Powered by <a href="http://getpelican.com">Pelican</a></span>
+</p></footer>
+  <script src="./theme/js/modernizr-2.0.js"></script>
+  <script src="./theme/js/ender.js"></script>
+  <script src="./theme/js/octopress.js" type="text/javascript"></script>
+</body>
+</html>
