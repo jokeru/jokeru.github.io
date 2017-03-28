@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Apache Performance Tunning &mdash; wiki'd</title>
+  <meta name="author" content="JoKeru">
+
+
+
+
+
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link href="./favicon.png" rel="icon">
+
+  <link href="./theme/css/main.css" media="screen, projection"
+        rel="stylesheet" type="text/css">
+
+  <link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic"
+        rel="stylesheet" type="text/css">
+  <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic"
+        rel="stylesheet" type="text/css">
+</head>
+
+<body>
+  <header role="banner"><hgroup>
+  <h1><a href="./">wiki'd</a></h1>
+    <h2>by JoKeru</h2>
+</hgroup></header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+</ul>
+
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value=".">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+
+<ul class="main-navigation">
+      <li >
+        <a href="./category/howto.html">Howto</a>
+      </li>
+      <li >
+        <a href="./category/privacy.html">Privacy</a>
+      </li>
+      <li class="active">
+        <a href="./category/sysadmin.html">Sysadmin</a>
+      </li>
+</ul></nav>
+  <div id="main">
+    <div id="content">
+<div>
+  <article class="hentry" role="article">
+<header>
+      <h1 class="entry-title">Apache Performance Tunning</h1>
+    <p class="meta">
+<time datetime="2011-02-27T15:15:00+00:00" pubdate>Sun 27 February 2011</time>    </p>
+</header>
+
+  <div class="entry-content"><p>The single biggest issue affecting Apache webserver performance is RAM.
+Have as much RAM as your hardware, OS, and funds allow. The more RAM your
+system has, the more processes (and threads) Apache can allocate and use -
+which directly translates into the amount of concurrent requests/clients
+Apache can serve.</p>
+<h3>1. TimeOut</h3>
+<p>Lower the amount of time the server will wait before failing a request.</p>
+<div class="highlight"><pre><span></span>Timeout 15
+</pre></div>
+
+
+<h3>2. KeepAlive</h3>
+<p>This directive allows multiple requests to be sent over the same TCP
+connection. This is particularly useful while serving HTML pages with
+lots of images. If KeepAlive is set to Off, then for each images, a
+separate TCP connection has to be made. Overhead due to establishing
+TCP connection can be eliminated by turning On KeepAlive.
+<code>KeepAliveTimeout</code> determines how long to wait for the next request.
+<code>MaxKeepAliveRequests</code> is the maximum number of requests to allow
+during a persistent connection.</p>
+<div class="highlight"><pre><span></span>KeepAlive On  
+KeepAliveTimeout 3  
+MaxKeepAliveRequests 50  
+</pre></div>
+
+
+<h3>3. Process Creation - prefork MPM</h3>
+<div class="highlight"><pre><span></span><span class="nt">&lt;ifmodule</span> <span class="err">mpm_prefork_module</span><span class="nt">&gt;</span>  
+StartServers 20  
+MinSpareServers 10  
+MaxSpareServers 20  
+MaxClients 256  
+MaxRequestsPerChild 5000  
+<span class="nt">&lt;/ifmodule&gt;</span>  
+</pre></div>
+
+
+<p><code>MaxClients</code> sets a limit on the number of simultaneous
+connections/requests that will be served. Set this number too low and
+resources will go to waste. Set this number too high and an influx of
+connections will bring the server to a stand still. Set this number just
+right and your server will fully utilize the available resources. An
+approximation of this number should be derived by dividing the amount of
+system memory (physical RAM) available by the maximum size of an
+apache/httpd process (with a generous amount spared for all other
+processes).</p>
+<div class="highlight"><pre><span></span>MaxClients ≈ (RAM - size_all_other_processes) / (size_apache_process)
+</pre></div>
+
+
+<p>Get the value of apache process size in KiloBytes (RSS column):  </p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> ps -ylC apache2 --sort:rss  
+</pre></div>
+
+
+<p>The <code>StartServers</code> directive sets the number of child server
+processes created on startup. Apache will continue creating child
+processes until the <code>MinSpareServers</code> setting is reached. This doesn't
+have much effect on performance if the server isn't restarted
+frequently. If there are lot of requests and Apache is restarted
+frequently, set this to a relatively high value.</p>
+<p><code>MaxSpareServers</code> and <code>MinSpareServers</code> determine how many child
+processes to keep active while waiting for requests. If the
+<code>MinSpareServers</code> is too low and a bunch of requests come in, Apache will
+have to spawn additional child processes to serve the requests. Creating
+child processes is relatively expensive. If the server is busy creating
+child processes, it won't be able to serve the client requests
+immediately. <code>MaxSpareServers</code> shouldn't be set too high: too many child
+processes will consume resources unnecessarily. Tune <code>MinSpareServers</code> and
+<code>MaxSpareServers</code> so that Apache need not spawn more than 4 child
+processes per second (Apache can spawn a maximum of 32 child processes
+per second). When more than 4 children are spawned per second, a message
+will be logged in the ErrorLog.</p>
+<p>The <code>MaxRequestsPerChild</code> directive sets the limit on the number of
+requests that an individual child server process will handle. After
+<code>MaxRequestsPerChild</code> requests, the child process will die. It's set to 0
+by default, the child process will never expire. It is appropriate to
+set this to a value of few thousands. This can help prevent memory
+leakage, since the process dies after serving a certain number of
+requests. Don't set this too low, since creating new processes does have
+overhead. The goal here is to recycle each process once per day, as
+apache threads gradually increase their memory allocation as they run.</p>
+<h3>4. SymLinks</h3>
+<p>Make sure <code>Options +FollowSymLinks -SymLinksIfOwnerMatch</code> is set for all
+directories. Otherwise, Apache will issue an extra system call per
+filename component to substantiate that the filename is NOT a symlink,
+and more system calls to match an owner.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;directory</span> <span class="err">xxx</span><span class="nt">&gt;</span>
+ Options FollowSymLinks
+<span class="nt">&lt;/directory&gt;</span>
+</pre></div>
+
+
+<h3>5. AllowOverride</h3>
+<p>Set a default <code>AllowOverride None</code> for your filesystem. Otherwise, for
+a given URL to path translation, Apache will attempt to detect an
+.htaccess file under every directory level of the given path.</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;directory</span> <span class="err">xxx</span><span class="nt">&gt;</span>
+ AllowOverride None
+<span class="nt">&lt;/directory&gt;</span>
+</pre></div>
+
+
+<blockquote>
+<p>source: <a href="http://linuxgazette.net/123/vishnu.html">http://linuxgazette.net/123/vishnu.html</a>
+source: <a href="http://httpd.apache.org/docs/2.0/misc/perf-tuning.html">http://httpd.apache.org/docs/2.0/misc/perf-tuning.html</a>
+source: <a href="http://www.devside.net/articles/apache-performance-tuning">http://www.devside.net/articles/apache-performance-tuning</a></p>
+</blockquote></div>
+    <footer>
+<p class="meta">
+  <span class="byline author vcard">
+    Posted by <span class="fn">
+        jokeru
+    </span>
+  </span>
+<time datetime="2011-02-27T15:15:00+00:00" pubdate>Sun 27 February 2011</time>  <span class="categories">
+    <a class='category' href='./category/sysadmin.html'>sysadmin</a>
+  </span>
+  <span class="categories">
+    <a class="category" href="./tag/linux.html">linux</a>,    <a class="category" href="./tag/apache.html">apache</a>,    <a class="category" href="./tag/performance.html">performance</a>,    <a class="category" href="./tag/tuning.html">tuning</a>  </span>
+</p><div class="sharing">
+</div>    </footer>
+  </article>
+
+</div>
+<aside class="sidebar">
+  <section>
+    <h1>Recent Posts</h1>
+    <ul id="recent_posts">
+      <li class="post">
+          <a href="./how-to-it-s-time-to-drop-wordpress-say-hello-to-my-pelican.html">It's time to drop WordPress, say hello to my Pelican</a>
+      </li>
+      <li class="post">
+          <a href="./google-dns-down-18-march-2016.html">Google DNS Down - 18 March 2016</a>
+      </li>
+      <li class="post">
+          <a href="./howto-couchbase-install-error-on-openvz.html">Couchbase install error on OpenVZ</a>
+      </li>
+      <li class="post">
+          <a href="./how-to-opennicproject.html">Stay Low - DNS</a>
+      </li>
+      <li class="post">
+          <a href="./howto-ipmi-sol-on-debian.html">IPMI SOL on Debian</a>
+      </li>
+    </ul>
+  </section>
+  <section>
+      
+    <h1>Categories</h1>
+    <ul id="recent_posts">
+        <li><a href="./category/howto.html">HowTo</a></li>
+        <li><a href="./category/privacy.html">privacy</a></li>
+        <li><a href="./category/sysadmin.html">sysadmin</a></li>
+    </ul>
+  </section>
+ 
+
+  <section>
+  <h1>Tags</h1>
+    <a href="./tag/reverse-proxy.html">reverse proxy</a>,    <a href="./tag/restore.html">Restore</a>,    <a href="./tag/postfix.html">Postfix</a>,    <a href="./tag/sysctl.html">sysctl</a>,    <a href="./tag/brute-force.html">brute force</a>,    <a href="./tag/nosql.html">nosql</a>,    <a href="./tag/wmware.html">WMware</a>,    <a href="./tag/dba.html">dba</a>,    <a href="./tag/ping.html">ping</a>,    <a href="./tag/tcp.html">TCP</a>,    <a href="./tag/olive.html">Olive</a>,    <a href="./tag/bandwidth.html">bandwidth</a>,    <a href="./tag/iops.html">IOPS</a>,    <a href="./tag/strace.html">strace</a>,    <a href="./tag/hack.html">hack</a>,    <a href="./tag/disk.html">disk</a>,    <a href="./tag/retention.html">retention</a>,    <a href="./tag/web.html">web</a>,    <a href="./tag/ext4.html">ext4</a>,    <a href="./tag/load-balance.html">Load Balance</a>,    <a href="./tag/pptpd.html">pptpd</a>,    <a href="./tag/wget.html">wget</a>,    <a href="./tag/imap.html">IMAP</a>,    <a href="./tag/striping.html">striping</a>,    <a href="./tag/selinux.html">SELinux</a>,    <a href="./tag/softether.html">softether</a>,    <a href="./tag/pubsub.html">pub/sub</a>,    <a href="./tag/iptables.html">iptables</a>,    <a href="./tag/masterslave.html">master/slave</a>,    <a href="./tag/dk.html">DK</a>,    <a href="./tag/python.html">python</a>,    <a href="./tag/ipmi.html">ipmi</a>,    <a href="./tag/dd.html">dd</a>,    <a href="./tag/db.html">db</a>,    <a href="./tag/auth.html">auth</a>,    <a href="./tag/repo.html">repo</a>,    <a href="./tag/ssl.html">SSL</a>,    <a href="./tag/amazon.html">Amazon</a>,    <a href="./tag/traffic.html">traffic</a>,    <a href="./tag/ssh.html">SSH</a>,    <a href="./tag/tmpfs.html">tmpfs</a>,    <a href="./tag/transparent.html">transparent</a>,    <a href="./tag/ipsec.html">ipsec</a>,    <a href="./tag/webmail.html">Webmail</a>,    <a href="./tag/postgix.html">postgix</a>,    <a href="./tag/vsftpd.html">Vsftpd</a>,    <a href="./tag/couchbase.html">couchbase</a>,    <a href="./tag/gui.html">gui</a>,    <a href="./tag/dante.html">Dante</a>,    <a href="./tag/webmin.html">Webmin</a>,    <a href="./tag/token.html">token</a>,    <a href="./tag/session.html">session</a>,    <a href="./tag/nfs.html">NFS</a>,    <a href="./tag/ftpfs.html">ftpfs</a>,    <a href="./tag/rsync.html">rsync</a>,    <a href="./tag/debug.html">debug</a>,    <a href="./tag/x.html">x</a>,    <a href="./tag/security.html">security</a>,    <a href="./tag/mysql-proxy.html">mysql-proxy</a>,    <a href="./tag/freeradius.html">freeradius</a>,    <a href="./tag/virtualbox.html">VirtualBox</a>,    <a href="./tag/google.html">google</a>,    <a href="./tag/pure-ftpd.html">pure-ftpd</a>,    <a href="./tag/logs.html">logs</a>,    <a href="./tag/centos.html">CentOS</a>,    <a href="./tag/drbd.html">drbd</a>,    <a href="./tag/ipip.html">ipip</a>,    <a href="./tag/chunk.html">chunk</a>,    <a href="./tag/mysql.html">MySQL</a>,    <a href="./tag/kibana.html">kibana</a>,    <a href="./tag/cron.html">cron</a>,    <a href="./tag/hp-smart-array.html">HP Smart Array</a>,    <a href="./tag/mod_proxy_fcgi.html">mod_proxy_fcgi</a>,    <a href="./tag/radius.html">radius</a>,    <a href="./tag/backfire.html">backfire</a>,    <a href="./tag/ebs.html">EBS</a>,    <a href="./tag/iperf.html">iperf</a>,    <a href="./tag/mtu.html">MTU</a>,    <a href="./tag/ephemeral-ports.html">ephemeral ports</a>,    <a href="./tag/vmware.html">VMware</a>,    <a href="./tag/reverse-path-forwarding.html">Reverse Path Forwarding</a>,    <a href="./tag/ftp.html">FTP</a>,    <a href="./tag/centreon.html">Centreon</a>,    <a href="./tag/scale.html">scale</a>,    <a href="./tag/stats.html">stats</a>,    <a href="./tag/juniper.html">Juniper</a>,    <a href="./tag/redis.html">redis</a>,    <a href="./tag/grafana.html">grafana</a>,    <a href="./tag/routing.html">Routing</a>,    <a href="./tag/cciss.html">cciss</a>,    <a href="./tag/google-cloud-storage.html">Google Cloud Storage</a>,    <a href="./tag/opennicproject.html">opennicproject</a>,    <a href="./tag/vesta.html">vesta</a>,    <a href="./tag/elk.html">elk</a>,    <a href="./tag/inotify.html">inotify</a>,    <a href="./tag/vnc-server.html">vnc server</a>,    <a href="./tag/influxdb.html">influxdb</a>,    <a href="./tag/3proxy.html">3proxy</a>,    <a href="./tag/tcp_timestamp.html">tcp_timestamp</a>,    <a href="./tag/ubuntu.html">Ubuntu</a>,    <a href="./tag/apache.html">apache</a>,    <a href="./tag/stripe-width.html">stripe-width</a>,    <a href="./tag/logstash.html">logstash</a>,    <a href="./tag/bash.html">bash</a>,    <a href="./tag/usb.html">usb</a>,    <a href="./tag/tls.html">TLS</a>,    <a href="./tag/socket.html">socket</a>,    <a href="./tag/license.html">license</a>,    <a href="./tag/undelete.html">undelete</a>,    <a href="./tag/ilo.html">ilo</a>,    <a href="./tag/ids.html">ids</a>,    <a href="./tag/stride.html">stride</a>,    <a href="./tag/configuration-management.html">configuration management</a>,    <a href="./tag/elasticsearch.html">elasticsearch</a>,    <a href="./tag/rdm.html">rdm</a>,    <a href="./tag/xfce.html">xfce</a>,    <a href="./tag/backup.html">backup</a>,    <a href="./tag/proxy.html">Proxy</a>,    <a href="./tag/pelican.html">pelican</a>,    <a href="./tag/markdown.html">markdown</a>,    <a href="./tag/firewall.html">FireWall</a>,    <a href="./tag/ghettovcb.html">ghettoVCB</a>,    <a href="./tag/sol.html">sol</a>,    <a href="./tag/socks.html">Socks</a>,    <a href="./tag/down.html">down</a>,    <a href="./tag/exploit.html">exploit</a>,    <a href="./tag/api.html">api</a>,    <a href="./tag/linux.html">linux</a>,    <a href="./tag/curlftpfs.html">curlftpfs</a>,    <a href="./tag/snmpd.html">SNMPd</a>,    <a href="./tag/cloud.html">cloud</a>,    <a href="./tag/tracepath.html">tracepath</a>,    <a href="./tag/code.html">code</a>,    <a href="./tag/git.html">git</a>,    <a href="./tag/cgroups.html">cgroups</a>,    <a href="./tag/tuning.html">Tuning</a>,    <a href="./tag/octopress.html">octopress</a>,    <a href="./tag/snmp.html">SNMP</a>,    <a href="./tag/debian.html">debian</a>,    <a href="./tag/wordpress.html">wordpress</a>,    <a href="./tag/dns.html">dns</a>,    <a href="./tag/forward.html">forward</a>,    <a href="./tag/tcpdump.html">tcpdump</a>,    <a href="./tag/big-data.html">big data</a>,    <a href="./tag/openvz.html">openvz</a>,    <a href="./tag/asymmetric.html">asymmetric</a>,    <a href="./tag/openvpn.html">openvpn</a>,    <a href="./tag/redmon.html">redmon</a>,    <a href="./tag/benchmark.html">benchmark</a>,    <a href="./tag/nc.html">nc</a>,    <a href="./tag/blacklist.html">blacklist</a>,    <a href="./tag/collectd.html">collectd</a>,    <a href="./tag/mail.html">Mail</a>,    <a href="./tag/oauth.html">oauth</a>,    <a href="./tag/vpn.html">VPN</a>,    <a href="./tag/bug.html">bug</a>,    <a href="./tag/iscsi.html">iSCSI</a>,    <a href="./tag/oauth2.html">oauth2</a>,    <a href="./tag/itil.html">itil</a>,    <a href="./tag/cluster.html">cluster</a>,    <a href="./tag/tunnel.html">Tunnel</a>,    <a href="./tag/esxi.html">ESXi</a>,    <a href="./tag/lumberjack.html">lumberjack</a>,    <a href="./tag/tcp_tw_recycle.html">tcp_tw_recycle</a>,    <a href="./tag/bucket.html">bucket</a>,    <a href="./tag/hosting.html">hosting</a>,    <a href="./tag/screenos.html">ScreenOS</a>,    <a href="./tag/control-panel.html">control panel</a>,    <a href="./tag/iozone.html">iozone</a>,    <a href="./tag/ui.html">ui</a>,    <a href="./tag/roundcube.html">Roundcube</a>,    <a href="./tag/error.html">error</a>,    <a href="./tag/lvm.html">lvm</a>,    <a href="./tag/sysbench.html">sysbench</a>,    <a href="./tag/scripting.html">scripting</a>,    <a href="./tag/san.html">SAN</a>,    <a href="./tag/bind.html">bind</a>,    <a href="./tag/syscall.html">syscall</a>,    <a href="./tag/pop3s.html">POP3S</a>,    <a href="./tag/squid.html">Squid</a>,    <a href="./tag/smtp.html">SMTP</a>,    <a href="./tag/vm.html">VM</a>,    <a href="./tag/hardware.html">Hardware</a>,    <a href="./tag/raw.html">raw</a>,    <a href="./tag/fail2ban.html">fail2ban</a>,    <a href="./tag/conntrack.html">conntrack</a>,    <a href="./tag/vestacp.html">vestacp</a>,    <a href="./tag/curl.html">curl</a>,    <a href="./tag/paws.html">paws</a>,    <a href="./tag/7z.html">7z</a>,    <a href="./tag/gcc.html">gcc</a>,    <a href="./tag/recover.html">recover</a>,    <a href="./tag/monitoring.html">monitoring</a>,    <a href="./tag/relay.html">relay</a>,    <a href="./tag/authoritative.html">authoritative</a>,    <a href="./tag/mod-fastcgi.html">mod-fastcgi</a>,    <a href="./tag/php-fpm.html">php-fpm</a>,    <a href="./tag/storage.html">storage</a>,    <a href="./tag/high-availability.html">High Availability</a>,    <a href="./tag/dkim.html">DKIM</a>,    <a href="./tag/junos.html">JunOS</a>,    <a href="./tag/df.html">df</a>,    <a href="./tag/github-pages.html">github pages</a>,    <a href="./tag/gre.html">GRE</a>,    <a href="./tag/dyndns.html">dyndns</a>,    <a href="./tag/openwrt.html">openwrt</a>,    <a href="./tag/performance.html">Performance</a>,    <a href="./tag/channel.html">channel</a>,    <a href="./tag/raid.html">RAID</a>,    <a href="./tag/users.html">users</a>,    <a href="./tag/raspberry-pi.html">Raspberry Pi</a>,    <a href="./tag/filtering.html">Filtering</a>,    <a href="./tag/mongodb.html">mongodb</a>,    <a href="./tag/aws.html">AWS</a>,    <a href="./tag/vcb.html">VCB</a>,    <a href="./tag/metrics.html">metrics</a>,    <a href="./tag/reverse-shell.html">reverse shell</a>,    <a href="./tag/stripe.html">stripe</a>,    <a href="./tag/drac.html">drac</a>,    <a href="./tag/sshfs.html">sshfs</a>,    <a href="./tag/php.html">PHP</a>,    <a href="./tag/payment.html">payment</a>,    <a href="./tag/pflogsumm.html">pflogsumm</a>,    <a href="./tag/pop3.html">POP3</a>,    <a href="./tag/ip-accounting.html">IP Accounting</a>,    <a href="./tag/remote.html">remote</a>,    <a href="./tag/replication.html">Replication</a>,    <a href="./tag/mobile.html">mobile</a>,    <a href="./tag/isg.html">ISG</a>,    <a href="./tag/monit.html">Monit</a>,    <a href="./tag/snapshot.html">snapshot</a>,    <a href="./tag/filesystem.html">filesystem</a>,    <a href="./tag/dos.html">DoS</a>,    <a href="./tag/incron.html">incron</a>,    <a href="./tag/cpu.html">cpu</a>,    <a href="./tag/predis.html">predis</a>  </section>
+
+
+
+</aside>    </div>
+  </div>
+  <footer role="contentinfo"><p>
+    Copyright &copy;  2011&ndash;2016  JoKeru &mdash;
+  <span class="credit">Powered by <a href="http://getpelican.com">Pelican</a></span>
+</p></footer>
+  <script src="./theme/js/modernizr-2.0.js"></script>
+  <script src="./theme/js/ender.js"></script>
+  <script src="./theme/js/octopress.js" type="text/javascript"></script>
+</body>
+</html>
