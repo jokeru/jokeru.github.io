@@ -4,8 +4,10 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>wiki'd</title>
+  <title>a CentOS within a CentOS - virtualization with kvm and libvirt &mdash; wiki'd</title>
   <meta name="author" content="JoKeru">
+
+
 
 
 
@@ -49,95 +51,16 @@
       <li >
         <a href="./category/privacy.html">Privacy</a>
       </li>
-      <li >
+      <li class="active">
         <a href="./category/sysadmin.html">Sysadmin</a>
       </li>
 </ul></nav>
   <div id="main">
     <div id="content">
-<div class="blog-index">
-  		<article>
+<div>
+  <article class="hentry" role="article">
 <header>
-      <h1 class="entry-title">
-        <a href="./how-to-it-s-time-to-drop-wordpress-say-hello-to-my-pelican.html">It's time to drop WordPress, say hello to my Pelican</a>
-      </h1>
-    <p class="meta">
-<time datetime="2016-04-04T21:30:00+01:00" pubdate>Mon 04 April 2016</time>    </p>
-</header>
-
-  <div class="entry-content"><h3>Short story</h3>
-<p>There is nothing more to say: WordPress is gone, Pelican is in.</p>
-<h3>Long story</h3>
-<p>Last year this wiki was running a self-hosted WordPress solution. But it got hacked.</p>
-<p>I never got the time to investigate how it happened (even though I had the auto-update feature enabled) but it ...</p></div>
-  <footer>
-    <a rel="full-article" href="./how-to-it-s-time-to-drop-wordpress-say-hello-to-my-pelican.html">Read On &crarr;</a>
-  </footer>
-  		</article>
-  		<article>
-<header>
-      <h1 class="entry-title">
-        <a href="./google-dns-down-18-march-2016.html">Google DNS Down - 18 March 2016</a>
-      </h1>
-    <p class="meta">
-<time datetime="2016-03-18T09:30:00+00:00" pubdate>Fri 18 March 2016</time>    </p>
-</header>
-
-  <div class="entry-content"><p>If you're using the Google DNSs <code>8.8.8.8</code> and <code>8.8.4.4</code>, you might have an issue and you don't know about it :)</p>
-<h3>Here is what happened:</h3>
-<ul>
-<li>I have some servers configured to use these DNSs (and I've been using them for ages now ...</li></ul></div>
-  <footer>
-    <a rel="full-article" href="./google-dns-down-18-march-2016.html">Read On &crarr;</a>
-  </footer>
-  		</article>
-  		<article>
-<header>
-      <h1 class="entry-title">
-        <a href="./how-to-couchbase-install-error-on-openvz.html">Couchbase install error on OpenVZ</a>
-      </h1>
-    <p class="meta">
-<time datetime="2015-11-02T21:21:00+00:00" pubdate>Mon 02 November 2015</time>    </p>
-</header>
-
-  <div class="entry-content"><p>While trying to migrate an Infrastructure away from Amazon (their service is not at all that cheap) to a container based one @<a href="https://wable.com/">Wable</a> (good offer and they "swear" they'll never over-commit), one of the components failed - it was a Couchbase server.</p>
-<p>Let's follow the process (and the debug ...</p></div>
-  <footer>
-    <a rel="full-article" href="./how-to-couchbase-install-error-on-openvz.html">Read On &crarr;</a>
-  </footer>
-  		</article>
-  		<article>
-<header>
-      <h1 class="entry-title">
-        <a href="./how-to-stay-low-dns.html">Stay Low - DNS</a>
-      </h1>
-    <p class="meta">
-<time datetime="2015-11-02T21:00:00+00:00" pubdate>Mon 02 November 2015</time>    </p>
-</header>
-
-  <div class="entry-content"><p>Why keep using the Google DNSs <code>8.8.8.8</code> and <code>8.8.4.4</code> and allow <em>them</em> to record all your queries?
-It's time to stay low with <a href="https://www.opennicproject.org/">https://www.opennicproject.org</a> !</p></div>
-  		</article>
-  		<article>
-<header>
-      <h1 class="entry-title">
-        <a href="./how-to-ipmi-sol-on-debian.html">IPMI SOL on Debian</a>
-      </h1>
-    <p class="meta">
-<time datetime="2015-09-18T22:31:00+01:00" pubdate>Fri 18 September 2015</time>    </p>
-</header>
-
-  <div class="entry-content"><p>IPMI (Intelligent Platform Management Interface) provides out-of-band management and monitoring of servers (Supermicro X9SCL/X9SCM in my case). This is similar to Dell's DRAC or HP's iLO, but cheaper.</p>
-<p>SOL (Serial over LAN) is a mechanism that enables the input and output of the serial port of a ...</p></div>
-  <footer>
-    <a rel="full-article" href="./how-to-ipmi-sol-on-debian.html">Read On &crarr;</a>
-  </footer>
-  		</article>
-  		<article>
-<header>
-      <h1 class="entry-title">
-        <a href="./how-to-a-centos-within-a-centos-virtualization-with-kvm-and-libvirt.html">a CentOS within a CentOS - virtualization with kvm and libvirt</a>
-      </h1>
+      <h1 class="entry-title">a CentOS within a CentOS - virtualization with kvm and libvirt</h1>
     <p class="meta">
 <time datetime="2015-07-23T14:41:00+01:00" pubdate>Thu 23 July 2015</time>    </p>
 </header>
@@ -146,91 +69,143 @@ It's time to stay low with <a href="https://www.opennicproject.org/">https://www
 Bellow you have a step-by-step procedure on how to to get a CentOS VM running inside a CentOS host.</p>
 <h4>Install and start the services</h4>
 <div class="highlight"><pre><span></span><span class="gp">$</span> uname -a
-<span class="go">Linux centos 2.6 ...</span></pre></div></div>
-  <footer>
-    <a rel="full-article" href="./how-to-a-centos-within-a-centos-virtualization-with-kvm-and-libvirt.html">Read On &crarr;</a>
-  </footer>
-  		</article>
-  		<article>
-<header>
-      <h1 class="entry-title">
-        <a href="./howto-increase-vm-disk-capacity.html">Increase VM disk capacity</a>
-      </h1>
-    <p class="meta">
-<time datetime="2015-07-17T12:00:00+01:00" pubdate>Fri 17 July 2015</time>    </p>
-</header>
+<span class="go">Linux centos 2.6.32-504.12.2.el6.x86_64 #1 SMP Wed Mar 11 22:03:14 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux</span>
+<span class="gp">$</span> egrep -c <span class="s1">&#39;(vmx|svm)&#39;</span> /proc/cpuinfo
+<span class="go">4</span>
 
-  <div class="entry-content"><p>Ever needed a bigger disk (not for root) inside your Guest OS (powered
-by VMware) ?<br />
-Look no further, I have the answer.</p>
-<p>You don't need to stop the guest, this operation is done on a running
-VM.<br />
-Login on you vCenter, edit the VM's settings, increase disk size ...</p></div>
-  <footer>
-    <a rel="full-article" href="./howto-increase-vm-disk-capacity.html">Read On &crarr;</a>
-  </footer>
-  		</article>
-  		<article>
-<header>
-      <h1 class="entry-title">
-        <a href="./how-to-freeradius-basics.html">FreeRADIUS basics</a>
-      </h1>
-    <p class="meta">
-<time datetime="2015-07-08T23:55:00+01:00" pubdate>Wed 08 July 2015</time>    </p>
-</header>
+<span class="gp">$</span> yum install kvm qemu-kvm <span class="c1"># kvm kernel module and qemu hosted (type 2) hypervisor</span>
+<span class="gp">$</span> yum install libvirt libvirt-python python-virtinst <span class="c1"># kvm manager</span>
+<span class="gp">#</span> optional packages
+<span class="gp">$</span> yum install libguestfs-tools <span class="c1"># tools for accessing and modifying virtual machine disk images</span>
 
-  <div class="entry-content"><p>While playing around with <a href="https://www.softether.org/">SoftEther</a>, one of the authentication options was Radius. So let's setup the radius server.</p>
-<div class="highlight"><pre><span></span><span class="gp">#</span> install server  
-<span class="gp">$</span> apt-get install freeradius -y
-<span class="gp">#</span> create a user
-<span class="gp">$</span> <span class="nb">echo</span> <span class="s1">&#39;test Cleartext-Password := &quot;test&quot;&#39;</span> &gt;&gt; /etc/freeradius/users
-<span class="gp">#</span> no need to add clients, localhost is allowed by default
-<span class="gp">$</span> touch /etc/freeradius/clients.conf ...</pre></div></div>
-  <footer>
-    <a rel="full-article" href="./how-to-freeradius-basics.html">Read On &crarr;</a>
-  </footer>
-  		</article>
-  		<article>
-<header>
-      <h1 class="entry-title">
-        <a href="./how-to-reverse-shell.html">Reverse Shell</a>
-      </h1>
-    <p class="meta">
-<time datetime="2015-07-08T23:25:00+01:00" pubdate>Wed 08 July 2015</time>    </p>
-</header>
+<span class="gp">#</span> start the libvirt virtualization management system server daemon
+<span class="gp">$</span> chkconfig libvirtd on
+<span class="gp">$</span> service libvirtd start <span class="c1"># be sure your hostname resolves correctly to avoid any warnings</span>
+<span class="gp">$</span> service libvirtd status
+<span class="gp">$</span> virsh -c qemu:///system list
+<span class="go">Id Name State</span>
+<span class="go">----------------------------------------------------</span>
+</pre></div>
 
-  <div class="entry-content"><p>A reverse shell is achieved when you "send" a server's shell (in my demo the server is named "target") to another server ("hq" in my setup).</p>
-<p>Using this technique you can run root commands on a server you aren't connected.</p>
-<div class="highlight"><pre><span></span><span class="gp">#</span> open up a tcp port on the <span class="s2">&quot;hq ...</span></pre></div></div>
-  <footer>
-    <a rel="full-article" href="./how-to-reverse-shell.html">Read On &crarr;</a>
-  </footer>
-  		</article>
-  		<article>
-<header>
-      <h1 class="entry-title">
-        <a href="./howto-git-yourself-configuration-management-server.html">Git yourself / configuration management server</a>
-      </h1>
-    <p class="meta">
-<time datetime="2015-05-18T15:00:00+01:00" pubdate>Mon 18 May 2015</time>    </p>
-</header>
 
-  <div class="entry-content"><p>If you don't know what is Git good for, or if you do, I suggest to start
-with these two pages:
-<a href="http://rogerdudler.github.io/git-guide/" title="http://rogerdudler.github.io/git-guide/">http://rogerdudler.github.io/git-guide/</a>
-and
-<a href="https://www.atlassian.com/git/tutorials/setting-up-a-repository" title="https://www.atlassian.com/git/tutorials/setting-up-a-repository">https://www.atlassian.com/git/tutorials/setting-up-a-repository</a>.</p>
-<p>Now that everything is clear, we can go on configuring the good stuff:<br />
-- we'll ...</p></div>
-  <footer>
-    <a rel="full-article" href="./howto-git-yourself-configuration-management-server.html">Read On &crarr;</a>
-  </footer>
-  		</article>
-<div class="pagination">
-    <a class="prev" href="./index2.html">&larr; Older</a>
+<p>The default virtual network configuration is known as Usermode Networking.
+Traffic is NATed through the host interface to the outside network.</p>
+<p>Alternately, you can configure Bridged Networking to enable external hosts to directly access services on the guest operating system.</p>
+<h4>I'll use the second option for this demo</h4>
+<div class="highlight"><pre><span></span><span class="gp">#</span> disable the Usermode Networking
+<span class="gp">$</span> virsh net-list
+<span class="go">Name State Autostart Persistent</span>
+<span class="go">--------------------------------------------------</span>
+<span class="go">default active yes yes</span>
+<span class="gp">$</span> virsh net-destroy default
+<span class="go">Network default destroyed</span>
+<span class="gp">$</span> virsh net-undefine default
+<span class="go">Network default has been undefined</span>
+<span class="gp">$</span> virsh net-list
+<span class="go">Name State Autostart Persistent</span>
+<span class="go">--------------------------------------------------</span>
+<span class="gp">$</span> service libvirtd restart <span class="c1"># for safety</span>
 
-  <br />
-</div></div>
+<span class="gp">#</span> <span class="nb">enable</span> Bridged Networking on eth1 <span class="o">(</span>eth0 will remain <span class="k">for</span> host traffic<span class="o">)</span>
+<span class="gp">$</span> yum install bridge-utils
+<span class="gp">$</span> cat &lt;&lt;EOF &gt; /etc/sysconfig/network-scripts/ifcfg-eth1
+<span class="go">DEVICE=eth1</span>
+<span class="go">TYPE=Ethernet</span>
+<span class="go">ONBOOT=yes</span>
+<span class="go">BRIDGE=br1</span>
+<span class="go">IPV6INIT=no</span>
+<span class="go">EOF</span>
+<span class="gp">$</span> cat &lt;&lt;EOF &gt; /etc/sysconfig/network-scripts/ifcfg-br1
+<span class="go">DEVICE=br1</span>
+<span class="go">TYPE=Bridge</span>
+<span class="go">ONBOOT=yes</span>
+<span class="go">BOOTPROTO=none</span>
+<span class="go">IPV6INIT=no</span>
+<span class="go">DELAY=0</span>
+<span class="go">EOF</span>
+<span class="gp">$</span> /etc/init.d/network restart
+<span class="gp">$</span> brctl show
+<span class="go">bridge name bridge id STP enabled interfaces</span>
+<span class="go">br1 8000.001a6496addf no eth1</span>
+</pre></div>
+
+
+<h4>Let's get the CentOS ISO image and mount it to be used by the install process</h4>
+<div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nb">cd</span> /var/lib/libvirt/boot/
+<span class="gp">$</span> wget <span class="s2">&quot;http://ftp.ines.lug.ro/centos/6.6/isos/x86_64/CentOS-6.6-x86_64-netinstall.iso&quot;</span>
+<span class="gp">$</span> mkdir /mnt/centos66/
+<span class="gp">$</span> mount -o loop /var/lib/libvirt/boot/CentOS-6.6-x86_64-netinstall.iso /mnt/centos66/
+</pre></div>
+
+
+<h4>And create the VM</h4>
+<div class="highlight"><pre><span></span><span class="gp">$</span> virt-install <span class="se">\</span>
+<span class="go">--connect qemu:///system \</span>
+<span class="go">--name flash \</span>
+<span class="go">--description &quot;Flash VM&quot; \</span>
+<span class="go">--hvm \</span>
+<span class="go">--accelerate \</span>
+<span class="go">--ram 2048 \</span>
+<span class="go">--vcpus 1 \</span>
+<span class="go">--cpuset 3 \</span>
+<span class="go">--numatune 3 \</span>
+<span class="go">--cpu host \</span>
+<span class="go">--location /mnt/centos66 \</span>
+<span class="go">--os-type linux \</span>
+<span class="go">--os-variant rhel6 \</span>
+<span class="go">--disk path=/var/lib/libvirt/images/flash.img,bus=virtio,size=16,sparse=false \</span>
+<span class="go">--network bridge:br1,model=virtio \</span>
+<span class="go">--graphics none \</span>
+<span class="go">--extra-args=&quot;console=tty0 console=ttyS0,115200&quot;</span>
+</pre></div>
+
+
+<h4>Some useful management commands</h4>
+<div class="highlight"><pre><span></span><span class="go">virsh list</span>
+<span class="go">virsh list --all</span>
+
+<span class="go">virsh dominfo flash</span>
+<span class="go">virsh dumpxml flash</span>
+<span class="go">virsh edit flash</span>
+
+<span class="go">virsh console flash</span>
+<span class="go">virsh suspend flash</span>
+<span class="go">virsh resume flash</span>
+<span class="go">virsh shutdown flash # you need acpid inside the guest for this command to work</span>
+<span class="go">virsh start flash</span>
+<span class="go">virsh reboot flash # you need acpid inside the guest for this command to work</span>
+<span class="go">virsh destroy flash # ungraceful shutdown (can corrupt guest filesystems)</span>
+<span class="go">virsh autostart flash</span>
+<span class="go">virsh autostart --disable flash</span>
+<span class="go">virsh undefine flash # deletes all files associated with this guest</span>
+
+<span class="go">virt-clone --connect qemu:///system --original flash --name flash-copy --file /var/lib/libvirt/images/flash-copy.img</span>
+
+<span class="go">virt-top</span>
+<span class="go">virt-df</span>
+</pre></div>
+
+
+<blockquote>
+<p><a href="http://www.cyberciti.biz/faq/kvm-virtualization-in-redhat-centos-scientific-linux-6/">http://www.cyberciti.biz/faq/kvm-virtualization-in-redhat-centos-scientific-linux-6/</a><br />
+<a href="http://linux.dell.com/files/whitepapers/KVM_Virtualization_in_RHEL_6_made_easy.pdf">http://linux.dell.com/files/whitepapers/KVM_Virtualization_in_RHEL_6_made_easy.pdf</a><br />
+<a href="http://linux.dell.com/files/whitepapers/KVM_Virtualization_in_RHEL_6_Made_Easy_Part2.pdf">http://linux.dell.com/files/whitepapers/KVM_Virtualization_in_RHEL_6_Made_Easy_Part2.pdf</a></p>
+</blockquote></div>
+    <footer>
+<p class="meta">
+  <span class="byline author vcard">
+    Posted by <span class="fn">
+        jokeru
+    </span>
+  </span>
+<time datetime="2015-07-23T14:41:00+01:00" pubdate>Thu 23 July 2015</time>  <span class="categories">
+    <a class='category' href='./category/sysadmin.html'>sysadmin</a>
+  </span>
+</p><div class="sharing">
+</div>    </footer>
+  </article>
+
+</div>
 <aside class="sidebar">
   <section>
     <h1>Recent Posts</h1>
