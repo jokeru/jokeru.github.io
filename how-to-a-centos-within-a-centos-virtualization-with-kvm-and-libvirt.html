@@ -67,7 +67,7 @@
 
   <div class="entry-content"><p>This post will give you a quick intro into the basics of Kernel based Virtual Machine (<a href="http://www.linux-kvm.org/page/Main_Page">KVM</a>) in CentOS / RedHat.
 Bellow you have a step-by-step procedure on how to to get a CentOS VM running inside a CentOS host.</p>
-<h4>Install and start the services</h4>
+<h4>Install and start the services:</h4>
 <div class="highlight"><pre><span></span><span class="gp">$</span> uname -a
 <span class="go">Linux centos 2.6.32-504.12.2.el6.x86_64 #1 SMP Wed Mar 11 22:03:14 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux</span>
 <span class="gp">$</span> egrep -c <span class="s1">&#39;(vmx|svm)&#39;</span> /proc/cpuinfo
@@ -91,7 +91,7 @@ Bellow you have a step-by-step procedure on how to to get a CentOS VM running in
 <p>The default virtual network configuration is known as Usermode Networking.
 Traffic is NATed through the host interface to the outside network.</p>
 <p>Alternately, you can configure Bridged Networking to enable external hosts to directly access services on the guest operating system.</p>
-<h4>I'll use the second option for this demo</h4>
+<h4>I'll use the second option for this demo:</h4>
 <div class="highlight"><pre><span></span><span class="gp">#</span> disable the Usermode Networking
 <span class="gp">$</span> virsh net-list
 <span class="go">Name State Autostart Persistent</span>
@@ -130,7 +130,7 @@ Traffic is NATed through the host interface to the outside network.</p>
 </pre></div>
 
 
-<h4>Let's get the CentOS ISO image and mount it to be used by the install process</h4>
+<h4>Let's get the CentOS ISO image and mount it to be used by the install process:</h4>
 <div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nb">cd</span> /var/lib/libvirt/boot/
 <span class="gp">$</span> wget <span class="s2">&quot;http://ftp.ines.lug.ro/centos/6.6/isos/x86_64/CentOS-6.6-x86_64-netinstall.iso&quot;</span>
 <span class="gp">$</span> mkdir /mnt/centos66/
@@ -138,7 +138,7 @@ Traffic is NATed through the host interface to the outside network.</p>
 </pre></div>
 
 
-<h4>And create the VM</h4>
+<h4>And create the VM:</h4>
 <div class="highlight"><pre><span></span><span class="gp">$</span> virt-install <span class="se">\</span>
 --connect qemu:///system <span class="se">\</span>
 --name flash <span class="se">\</span>
@@ -160,7 +160,7 @@ Traffic is NATed through the host interface to the outside network.</p>
 </pre></div>
 
 
-<h4>Some useful management commands</h4>
+<h2>Some useful management commands:</h2>
 <div class="highlight"><pre><span></span><span class="go">virsh list</span>
 <span class="go">virsh list --all</span>
 

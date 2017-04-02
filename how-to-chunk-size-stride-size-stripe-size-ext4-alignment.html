@@ -66,10 +66,10 @@
 </header>
 
   <div class="entry-content"><p>In order to get the best performance from your RAID storage, you need to align everything (the filesystem with your RAID setup)!</p>
-<p>1 - <strong>chunk size</strong> of raid array - how you choose this value is not under this post's scope, let's consider the default for my raid controller - 256k
-2 - filesystem <strong>block size</strong> (ext4) is set to default - 4k
-3 - filesystem <strong>stride</strong> = array chunk size / filesystem block size: <code>256k / 4k = 64k</code>
-4 - filesystem <strong>stripe-width</strong> = filesystem stride * number of data disks in array (for a raid5 with 4 disks, this will be 3): <code>64k * 3 = 192k</code></p>
+<p>1 - <strong>chunk size</strong> of raid array - how you choose this value is not under this post's scope, let's consider the default for my raid controller - 256k</p>
+<p>2 - filesystem <strong>block size</strong> (ext4) is set to default - 4k</p>
+<p>3 - filesystem <strong>stride</strong> = array chunk size / filesystem block size: <code>256k / 4k = 64k</code></p>
+<p>4 - filesystem <strong>stripe-width</strong> = filesystem stride * number of data disks in array (for a raid5 with 4 disks, this will be 3): <code>64k * 3 = 192k</code></p>
 <h4>So this will translate into:</h4>
 <div class="highlight"><pre><span></span><span class="gp">$</span> mkfs.ext4 -b <span class="m">4096</span> -E <span class="nv">stride</span><span class="o">=</span><span class="m">64</span> -E stripe-width<span class="o">=</span><span class="m">64</span> /dev/sdb
 </pre></div>

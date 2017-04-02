@@ -70,7 +70,7 @@
 SOL can be accessed with Java (using the IPMI web interface) or with the linux "ipmitool" binary. Since Java is a nightmare to make it work, I've opted for the second method.</p>
 <p>I was an <code>operator</code> of that server, not the administrator, so the IPMI and SOL configuration was unknown. I had only the IPMI IP, Username and Password (and root access on the operating system). I needed to guess how the console redirection was made (I think that the server is shipped SOL-enabled, but I was not able to find this information for my server model).</p>
 <p>By default, you only get access to BIOS, the boot loader and/or the booted system requires additional settings.</p>
-<h4>Get OS redirection</h4>
+<h4>Get OS redirection:</h4>
 <div class="highlight"><pre><span></span><span class="gp">#</span> server was configured to redirect console to <span class="nv">COM2</span> <span class="o">=</span>&gt; ttyS2
 <span class="gp">#</span> and it used <span class="m">115200</span> as a bit-rate
 <span class="gp">$</span> <span class="nb">echo</span> <span class="s1">&#39;T0:23:respawn:/sbin/getty -L ttyS2 115200 vt100&#39;</span> &gt;&gt; /etc/inittab
