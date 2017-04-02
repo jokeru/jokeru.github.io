@@ -563,95 +563,78 @@ Also the subsystem is mounted under &lt;code&gt;/mnt/cgroups/&lt;/code&gt; - why
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;So the TCP connection started at 08:30.&lt;/p&gt;</content><category term="tcp"></category></entry><entry><title>stripe - the web / mobile payment gateway</title><link href="http://wiki.jokeru.ro/how-to-stripe-the-web-mobile-payment-gateway.html" rel="alternate"></link><published>2015-04-14T14:14:00+01:00</published><updated>2015-04-14T14:14:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2015-04-14:/how-to-stripe-the-web-mobile-payment-gateway.html</id><summary type="html">&lt;p&gt;&lt;a href="https://stripe.com/" title="https://stripe.com/"&gt;Stripe&lt;/a&gt; is the easiest
-payment gateway I've setup so far !&lt;br&gt;
-You can find all details about this service on their website, I will
-only mention that Twitter, Apple and Facebook is using it.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;\# composer prerequisites  &lt;/span&gt;
-&lt;span class="go"&gt;\$ apt-get install php5 git php5-curl  &lt;/span&gt;
-&lt;span class="go"&gt;\# install stripe-php library with composer  &lt;/span&gt;
-&lt;span class="go"&gt;\$ mkdir /var/www/stripe  &lt;/span&gt;
-&lt;span class="go"&gt;\$ cd …&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;p&gt;&lt;a href="https://stripe.com/" title="https://stripe.com/"&gt;Stripe&lt;/a&gt; is the easiest
-payment gateway I've setup so far !&lt;br&gt;
-You can find all details about this service on their website, I will
-only mention that Twitter, Apple and Facebook is using it.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;\# composer prerequisites  &lt;/span&gt;
-&lt;span class="go"&gt;\$ apt-get install php5 git php5-curl  &lt;/span&gt;
-&lt;span class="go"&gt;\# install stripe-php library with composer  &lt;/span&gt;
-&lt;span class="go"&gt;\$ mkdir /var/www/stripe  &lt;/span&gt;
-&lt;span class="go"&gt;\$ cd /var/www/stripe/  &lt;/span&gt;
-&lt;span class="go"&gt;\$ curl -sS https://getcomposer.org/installer | php  &lt;/span&gt;
-&lt;span class="go"&gt;\$ cat \&amp;lt;\&amp;lt;&amp;#39;EOF&amp;#39; \&amp;gt; composer.json  &lt;/span&gt;
-&lt;span class="go"&gt;{  &lt;/span&gt;
-&lt;span class="go"&gt;&amp;quot;require&amp;quot;: {  &lt;/span&gt;
-&lt;span class="go"&gt;&amp;quot;stripe/stripe-php&amp;quot;: &amp;quot;2.\*&amp;quot;  &lt;/span&gt;
-&lt;span class="go"&gt;}  &lt;/span&gt;
-&lt;span class="go"&gt;}  &lt;/span&gt;
-&lt;span class="go"&gt;EOF  &lt;/span&gt;
-&lt;span class="go"&gt;\$ php composer.phar install&lt;/span&gt;
+&lt;p&gt;So the TCP connection started at 08:30.&lt;/p&gt;</content><category term="tcp"></category></entry><entry><title>stripe - the web / mobile payment gateway</title><link href="http://wiki.jokeru.ro/how-to-stripe-the-web-mobile-payment-gateway.html" rel="alternate"></link><published>2015-04-14T14:14:00+01:00</published><updated>2015-04-14T14:14:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2015-04-14:/how-to-stripe-the-web-mobile-payment-gateway.html</id><summary type="html">&lt;p&gt;&lt;a href="https://stripe.com/" title="https://stripe.com/"&gt;Stripe&lt;/a&gt; is the easiest payment gateway I've setup so far!&lt;/p&gt;
+&lt;p&gt;You can find all details about this service on their website, I will only mention that Twitter, Apple and Facebook are using it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; composer prerequisites
+&lt;span class="gp"&gt;$&lt;/span&gt; apt-get install php5 git php5-curl
+&lt;span class="gp"&gt;#&lt;/span&gt; install stripe-php library with composer
+&lt;span class="gp"&gt;$&lt;/span&gt; mkdir /var/www/stripe
+&lt;span class="gp"&gt;$&lt;/span&gt; &lt;span class="nb"&gt;cd …&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;p&gt;&lt;a href="https://stripe.com/" title="https://stripe.com/"&gt;Stripe&lt;/a&gt; is the easiest payment gateway I've setup so far!&lt;/p&gt;
+&lt;p&gt;You can find all details about this service on their website, I will only mention that Twitter, Apple and Facebook are using it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; composer prerequisites
+&lt;span class="gp"&gt;$&lt;/span&gt; apt-get install php5 git php5-curl
+&lt;span class="gp"&gt;#&lt;/span&gt; install stripe-php library with composer
+&lt;span class="gp"&gt;$&lt;/span&gt; mkdir /var/www/stripe
+&lt;span class="gp"&gt;$&lt;/span&gt; &lt;span class="nb"&gt;cd&lt;/span&gt; /var/www/stripe/
+&lt;span class="gp"&gt;$&lt;/span&gt; curl -sS https://getcomposer.org/installer &lt;span class="p"&gt;|&lt;/span&gt; php
+&lt;span class="gp"&gt;$&lt;/span&gt; cat &amp;lt;&amp;lt;&lt;span class="s1"&gt;&amp;#39;EOF&amp;#39;&lt;/span&gt; &amp;gt; composer.json
+&lt;span class="go"&gt;{&lt;/span&gt;
+&lt;span class="go"&gt; &amp;quot;require&amp;quot;: {&lt;/span&gt;
+&lt;span class="go"&gt;  &amp;quot;stripe/stripe-php&amp;quot;: &amp;quot;2.*&amp;quot;&lt;/span&gt;
+&lt;span class="go"&gt; }&lt;/span&gt;
+&lt;span class="go"&gt;}&lt;/span&gt;
+&lt;span class="go"&gt;EOF&lt;/span&gt;
+&lt;span class="gp"&gt;$&lt;/span&gt; php composer.phar install
 
-&lt;span class="go"&gt;\$ cat \&amp;lt;\&amp;lt;&amp;#39;EOF&amp;#39; \&amp;gt; test.html&lt;/span&gt;
-
+&lt;span class="gp"&gt;$&lt;/span&gt; cat &amp;lt;&amp;lt;&lt;span class="s1"&gt;&amp;#39;EOF&amp;#39;&lt;/span&gt; &amp;gt; test.html
 &lt;span class="go"&gt;&amp;lt;form action=&amp;quot;charge.php&amp;quot; method=&amp;quot;POST&amp;quot;&amp;gt;&lt;/span&gt;
-&lt;span class="go"&gt;&amp;lt;script&amp;lt;br&amp;gt;&amp;lt;/script&amp;lt;br&amp;gt; src=&amp;quot;https://checkout.stripe.com/checkout.js&amp;quot;&lt;/span&gt;
-&lt;span class="go"&gt;class=&amp;quot;stripe-button&amp;quot;  &lt;/span&gt;
-&lt;span class="go"&gt;data-key=&amp;quot;pk\_test\_6pRNASCoBOKtIshFeQd4XMUh&amp;quot;  &lt;/span&gt;
-&lt;span class="go"&gt;data-amount=&amp;quot;2000&amp;quot;  &lt;/span&gt;
-&lt;span class="go"&gt;data-name=&amp;quot;Demo Site&amp;quot;  &lt;/span&gt;
-&lt;span class="go"&gt;data-description=&amp;quot;2 widgets (\$20.00)&amp;quot;  &lt;/span&gt;
-&lt;span class="go"&gt;data-image=&amp;quot;/128x128.png&amp;quot;\&amp;gt;  &lt;/span&gt;
-
+&lt;span class="go"&gt;&amp;lt;script src=&amp;quot;https://checkout.stripe.com/checkout.js&amp;quot; class=&amp;quot;stripe-button&amp;quot;&lt;/span&gt;
+&lt;span class="go"&gt;data-key=&amp;quot;pk_test_6pRNASCoBOKtIshFeQd4XMUh&amp;quot;&lt;/span&gt;
+&lt;span class="go"&gt;data-amount=&amp;quot;2000&amp;quot;&lt;/span&gt;
+&lt;span class="go"&gt;data-name=&amp;quot;Demo Site&amp;quot;&lt;/span&gt;
+&lt;span class="go"&gt;data-description=&amp;quot;2 widgets ($20.00)&amp;quot;&lt;/span&gt;
+&lt;span class="go"&gt;data-image=&amp;quot;/128x128.png&amp;quot;&amp;gt;&lt;/span&gt;
 &lt;span class="go"&gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
-
-
 &lt;span class="go"&gt;&amp;lt;/form&amp;gt;&lt;/span&gt;
-&lt;span class="go"&gt;EOF  &lt;/span&gt;
-&lt;span class="go"&gt;\$ cat \&amp;lt;\&amp;lt;&amp;#39;EOF&amp;#39; \&amp;gt; charge.php  &lt;/span&gt;
-&lt;span class="go"&gt;&amp;lt;?php&amp;lt;br ?&amp;gt; require &amp;#39;vendor/autoload.php&amp;#39;;  &lt;/span&gt;
-&lt;span class="go"&gt;\\Stripe\\Stripe::setApiKey(&amp;quot;sk\_test\_BQokikJOvBiI2HlWgH4olfQ2&amp;quot;);  &lt;/span&gt;
-&lt;span class="go"&gt;\$token = \$\_POST[&amp;#39;stripeToken&amp;#39;];  &lt;/span&gt;
-&lt;span class="go"&gt;try {  &lt;/span&gt;
-&lt;span class="go"&gt;\$charge = \\Stripe\\Charge::create(array(  &lt;/span&gt;
-&lt;span class="go"&gt;&amp;quot;amount&amp;quot; =\&amp;gt; 2000, // amount in cents, again  &lt;/span&gt;
-&lt;span class="go"&gt;&amp;quot;currency&amp;quot; =\&amp;gt; &amp;quot;usd&amp;quot;,  &lt;/span&gt;
-&lt;span class="go"&gt;&amp;quot;source&amp;quot; =\&amp;gt; \$token,  &lt;/span&gt;
-&lt;span class="go"&gt;&amp;quot;description&amp;quot; =\&amp;gt; &amp;quot;test charge&amp;quot;)  &lt;/span&gt;
-&lt;span class="go"&gt;);  &lt;/span&gt;
-&lt;span class="go"&gt;echo &amp;quot;ok&amp;quot;;  &lt;/span&gt;
-&lt;span class="go"&gt;\# other backend actions  &lt;/span&gt;
-&lt;span class="go"&gt;} catch(\\Stripe\\Error\\Card \$e) {  &lt;/span&gt;
-&lt;span class="go"&gt;echo &amp;quot;error, card was declined&amp;quot;;  &lt;/span&gt;
-&lt;span class="go"&gt;}  &lt;/span&gt;
-&lt;span class="go"&gt;EOF  &lt;/span&gt;
+&lt;span class="go"&gt;EOF&lt;/span&gt;
+
+&lt;span class="gp"&gt;$&lt;/span&gt; cat &amp;lt;&amp;lt;&lt;span class="s1"&gt;&amp;#39;EOF&amp;#39;&lt;/span&gt; &amp;gt; charge.php
+&lt;span class="go"&gt;&amp;lt;?php&lt;/span&gt;
+&lt;span class="go"&gt;require &amp;#39;vendor/autoload.php&amp;#39;;&lt;/span&gt;
+&lt;span class="go"&gt;\\Stripe\\Stripe::setApiKey(&amp;quot;sk_test_BQokikJOvBiI2HlWgH4olfQ2&amp;quot;);&lt;/span&gt;
+&lt;span class="gp"&gt;$&lt;/span&gt;&lt;span class="nv"&gt;token&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nv"&gt;$_POST&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;stripeToken&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="go"&gt;try {&lt;/span&gt;
+&lt;span class="gp"&gt; $&lt;/span&gt;&lt;span class="nv"&gt;charge&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="se"&gt;\\&lt;/span&gt;Stripe&lt;span class="se"&gt;\\&lt;/span&gt;Charge::create&lt;span class="o"&gt;(&lt;/span&gt;array&lt;span class="o"&gt;(&lt;/span&gt;
+&lt;span class="go"&gt;  &amp;quot;amount&amp;quot; =&amp;gt; 2000, // amount in cents, again&lt;/span&gt;
+&lt;span class="go"&gt;  &amp;quot;currency&amp;quot; =&amp;gt; &amp;quot;usd&amp;quot;,&lt;/span&gt;
+&lt;span class="go"&gt;  &amp;quot;source&amp;quot; =&amp;gt; $token,&lt;/span&gt;
+&lt;span class="go"&gt;  &amp;quot;description&amp;quot; =&amp;gt; &amp;quot;test charge&amp;quot;)&lt;/span&gt;
+&lt;span class="go"&gt; );&lt;/span&gt;
+&lt;span class="go"&gt; echo &amp;quot;ok&amp;quot;;&lt;/span&gt;
+&lt;span class="gp"&gt; #&lt;/span&gt; other backend actions
+&lt;span class="go"&gt;} catch(\\Stripe\\Error\\Card $e) {&lt;/span&gt;
+&lt;span class="go"&gt; echo &amp;quot;error, card was declined&amp;quot;;&lt;/span&gt;
+&lt;span class="go"&gt;}&lt;/span&gt;
+&lt;span class="go"&gt;EOF&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Now open your browser, open /stripe/test.html and that's all.&lt;/p&gt;</content><category term="api"></category><category term="mobile"></category><category term="payment"></category><category term="PHP"></category><category term="stripe"></category><category term="web"></category></entry><entry><title>Chunk size, stride size, stripe size, ext4, alignment ...</title><link href="http://wiki.jokeru.ro/how-to-chunk-size-stride-size-stripe-size-ext4-alignment.html" rel="alternate"></link><published>2015-04-06T17:57:00+01:00</published><updated>2015-04-06T17:57:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2015-04-06:/how-to-chunk-size-stride-size-stripe-size-ext4-alignment.html</id><summary type="html">&lt;p&gt;In order to get the best performance from your RAID storage, you need to
-align everything (the filesystem with your RAID setup) !&lt;/p&gt;
-&lt;p&gt;1 - &lt;strong&gt;chunk size&lt;/strong&gt; of raid array - how you choose this value is not
-under this post's scope, let's consider the default for my raid
-controller - 256k&lt;br&gt;
-2 - filesystem …&lt;/p&gt;</summary><content type="html">&lt;p&gt;In order to get the best performance from your RAID storage, you need to
-align everything (the filesystem with your RAID setup) !&lt;/p&gt;
-&lt;p&gt;1 - &lt;strong&gt;chunk size&lt;/strong&gt; of raid array - how you choose this value is not
-under this post's scope, let's consider the default for my raid
-controller - 256k&lt;br&gt;
-2 - filesystem &lt;strong&gt;block size&lt;/strong&gt; (ext4) is set to default - 4k&lt;/p&gt;
-&lt;p&gt;3 - filesystem &lt;strong&gt;stride&lt;/strong&gt; = array chunk size / filesystem block size =
-256k / 4k = 64k&lt;br&gt;
-4 - filesystem &lt;strong&gt;stripe-width&lt;/strong&gt; = filesystem stride * number of data
-disks in array (for a raid5 with 4 disks, this will be 3) = 64k * 3 =
-192k&lt;/p&gt;
-&lt;p&gt;So this will translate into:  &lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="go"&gt;\$ mkfs.ext4 -b 4096 -E stride=64 -E stripe-width=64 /dev/sdb  &lt;/span&gt;
+&lt;p&gt;Now open your browser, open &lt;code&gt;/stripe/test.html&lt;/code&gt; and that's all.&lt;/p&gt;</content><category term="api"></category><category term="mobile"></category><category term="payment"></category><category term="php"></category><category term="stripe"></category><category term="web"></category></entry><entry><title>Chunk size, stride size, stripe size, ext4, alignment ...</title><link href="http://wiki.jokeru.ro/how-to-chunk-size-stride-size-stripe-size-ext4-alignment.html" rel="alternate"></link><published>2015-04-06T17:57:00+01:00</published><updated>2015-04-06T17:57:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2015-04-06:/how-to-chunk-size-stride-size-stripe-size-ext4-alignment.html</id><summary type="html">&lt;p&gt;In order to get the best performance from your RAID storage, you need to align everything (the filesystem with your RAID setup)!&lt;/p&gt;
+&lt;p&gt;1 - &lt;strong&gt;chunk size&lt;/strong&gt; of raid array - how you choose this value is not under this post's scope, let's consider the default for my raid controller - 256k
+2 - filesystem …&lt;/p&gt;</summary><content type="html">&lt;p&gt;In order to get the best performance from your RAID storage, you need to align everything (the filesystem with your RAID setup)!&lt;/p&gt;
+&lt;p&gt;1 - &lt;strong&gt;chunk size&lt;/strong&gt; of raid array - how you choose this value is not under this post's scope, let's consider the default for my raid controller - 256k
+2 - filesystem &lt;strong&gt;block size&lt;/strong&gt; (ext4) is set to default - 4k
+3 - filesystem &lt;strong&gt;stride&lt;/strong&gt; = array chunk size / filesystem block size: &lt;code&gt;256k / 4k = 64k&lt;/code&gt;
+4 - filesystem &lt;strong&gt;stripe-width&lt;/strong&gt; = filesystem stride * number of data disks in array (for a raid5 with 4 disks, this will be 3): &lt;code&gt;64k * 3 = 192k&lt;/code&gt;&lt;/p&gt;
+&lt;h4&gt;So this will translate into:&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;$&lt;/span&gt; mkfs.ext4 -b &lt;span class="m"&gt;4096&lt;/span&gt; -E &lt;span class="nv"&gt;stride&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;64&lt;/span&gt; -E stripe-width&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;64&lt;/span&gt; /dev/sdb
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Or if you're too lazy to do the math, you can use this online
-calculator:&lt;/p&gt;
+&lt;h4&gt;Or if you're too lazy to do the math, you can use this online calculator:&lt;/h4&gt;
 &lt;blockquote&gt;
-&lt;p&gt;&lt;a href="http://busybox.net/~aldot/mkfs_stride.html" title="http://busybox.net/~aldot/mkfs_stride.html"&gt;http://busybox.net/\~aldot/mkfs_stride.html&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;</content><category term="chunk"></category><category term="ext4"></category><category term="RAID"></category><category term="stride"></category><category term="stripe-width"></category></entry><entry><title>Token Authentication in PHP with Redis</title><link href="http://wiki.jokeru.ro/how-to-token-authentication-in-php-with-redis.html" rel="alternate"></link><published>2015-04-01T23:10:00+01:00</published><updated>2015-04-01T23:10:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2015-04-01:/how-to-token-authentication-in-php-with-redis.html</id><summary type="html">&lt;p&gt;In this post I'll show you how to create and use a token based
+&lt;p&gt;&lt;a href="http://busybox.net/~aldot/mkfs_stride.html" title="http://busybox.net/~aldot/mkfs_stride.html"&gt;http://busybox.net/~aldot/mkfs_stride.html&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;</content><category term="chunk"></category><category term="ext4"></category><category term="raid"></category><category term="stride"></category><category term="stripe-width"></category></entry><entry><title>Token Authentication in PHP with Redis</title><link href="http://wiki.jokeru.ro/how-to-token-authentication-in-php-with-redis.html" rel="alternate"></link><published>2015-04-01T23:10:00+01:00</published><updated>2015-04-01T23:10:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2015-04-01:/how-to-token-authentication-in-php-with-redis.html</id><summary type="html">&lt;p&gt;In this post I'll show you how to create and use a token based
 authentication (something like OAuth2 but waaay lighter) in PHP. The
 token will expire after a certain period of time. In order to keep the
 token alive, I've also added a heartbeat function on the client side …&lt;/p&gt;</summary><content type="html">&lt;p&gt;In this post I'll show you how to create and use a token based
