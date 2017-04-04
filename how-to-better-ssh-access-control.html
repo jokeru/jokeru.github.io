@@ -4,8 +4,10 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Tag: Reverse Path Forwarding &mdash; wiki'd</title>
+  <title>Better SSH access control &mdash; wiki'd</title>
   <meta name="author" content="JoKeru">
+
+
 
 
 
@@ -49,42 +51,98 @@
       <li >
         <a href="http://wiki.jokeru.ro/category/privacy.html">Privacy</a>
       </li>
-      <li >
+      <li class="active">
         <a href="http://wiki.jokeru.ro/category/sysadmin.html">Sysadmin</a>
       </li>
 </ul></nav>
   <div id="main">
     <div id="content">
 <div>
-	<article role="article">
-    	<header>
-    		<h1 class="entry-title">Tag: Reverse Path Forwarding</h1>
-    	</header>
+  <article class="hentry" role="article">
+<header>
+      <h1 class="entry-title">Better SSH access control</h1>
+    <p class="meta">
+<time datetime="2017-04-04T12:12:00+01:00" pubdate>Tue 04 April 2017</time>    </p>
+</header>
 
-    	<div id="blog-archives">
-            <h2>2014</h2>
-                    <article>
-                        <h1><a href="http://wiki.jokeru.ro/routing-traffic-from-one-centos-to-another-centos.html">Routing traffic from one CentOS to another CentOS</a></h1>
-                        <time datetime="2014-03-30 01:01:00+00:00" pubdate>
-                            <span class="month">Mar</span>
-                            <span class="day">30</span>
-                            <span class="year">2014</span>
-                        </time>
-                        <footer>
-                            <span class="categories">posted in
-                                <a class='category' href='http://wiki.jokeru.ro/category/howto.html'>HowTo</a>
-                            </span>
-                        </footer>
-                    </article>
-	    </div>
-    </article>
+  <div class="entry-content"><blockquote>
+<p><em>the only truly secure server is one that is powered off and stored in a concrete room with no doors or windows</em></p>
+</blockquote>
+<p>SSH access to you instance is so last year, right now you just fire a new one and drop the old one.
+But if you insist in having SSH access, better make it safer (specially if your instance is publically exposed).</p>
+<p>Username &amp; password is bad, private keys are better but certificates the best.
+You just need to create a Root Certificate Authority that will be used to sign the access keys, in the signing process you are able to specify the user or hostname used for access and also an expiry date.</p>
+<h4>Let's create the Root SSH CA (on your secure management server):</h4>
+<div class="highlight"><pre><span></span><span class="gp">$</span> ssh-keygen -b <span class="m">4096</span> -t rsa -f /etc/jokeru-ssh-ca -C <span class="s2">&quot;JoKeru SSH CA Key&quot;</span>
+<span class="gp">#</span> I recommand setting up a strong passphrase <span class="k">for</span> this key
+</pre></div>
+
+
+<h4>Configure all instances to <strong>trust</strong> the CA:</h4>
+<div class="highlight"><pre><span></span><span class="gp">#</span> upload /etc/jokeru-ssh-ca.pub to /etc/ssh/ on all the instances
+<span class="gp">$</span> <span class="nb">echo</span> <span class="s1">&#39;TrustedUserCAKeys /etc/ssh/jokeru-ssh-ca.pub&#39;</span> &gt;&gt; /etc/ssh/sshd_config
+<span class="gp">$</span> /etc/init.d/ssh restart
+</pre></div>
+
+
+<h4>Sign a user key and use it for login (on your secure management server):</h4>
+<div class="highlight"><pre><span></span><span class="gp">#</span> create the user key <span class="o">(</span>no need <span class="k">for</span> passphrase here<span class="o">)</span>
+<span class="gp">$</span> ssh-keygen -b <span class="m">4096</span> -t rsa -f /home/j/.ssh/id_rsa
+
+<span class="gp">#</span> sign the key
+<span class="gp">$</span> ssh-keygen -s /etc/jokeru-ssh-ca -n noc -V +1d -I j@wiki /home/j/.ssh/id_rsa.pub
+<span class="gp">#</span> sets principal to <span class="s2">&quot;noc&quot;</span> <span class="o">(</span>target remote user to login<span class="o">)</span>, key is valid <span class="k">for</span> <span class="m">1</span> day, sets key identifier to <span class="s2">&quot;j@wiki&quot;</span> <span class="o">(</span>good <span class="k">for</span> logging/audit<span class="o">}</span>
+
+<span class="gp">#</span> view the signed certificate details
+<span class="gp">$</span> ssh-keygen -L -f /home/j/.ssh/id_rsa-cert.pub
+
+<span class="gp">#</span> connect using the key
+<span class="gp">$</span> ssh -i /home/j/.ssh/id_rsa noc@1.2.3.4
+</pre></div>
+
+
+<blockquote>
+<p><a href="https://ef.gy/hardening-ssh">https://ef.gy/hardening-ssh</a></p>
+</blockquote></div>
+    <footer>
+<p class="meta">
+  <span class="byline author vcard">
+    Posted by <span class="fn">
+        jokeru
+    </span>
+  </span>
+<time datetime="2017-04-04T12:12:00+01:00" pubdate>Tue 04 April 2017</time>  <span class="categories">
+    <a class='category' href='http://wiki.jokeru.ro/category/sysadmin.html'>sysadmin</a>
+  </span>
+  <span class="categories">
+    <a class="category" href="http://wiki.jokeru.ro/tag/linux.html">linux</a>,    <a class="category" href="http://wiki.jokeru.ro/tag/ssh.html">ssh</a>,    <a class="category" href="http://wiki.jokeru.ro/tag/access.html">access</a>,    <a class="category" href="http://wiki.jokeru.ro/tag/security.html">security</a>  </span>
+</p><div class="sharing">
+</div>    </footer>
+  </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div>
+  </section>
 </div>
 <aside class="sidebar">
   <section>
     <h1>Recent Posts</h1>
     <ul id="recent_posts">
       <li class="post">
-          <a href="http://wiki.jokeru.ro/routing-traffic-from-one-centos-to-another-centos.html">Routing traffic from one CentOS to another CentOS</a>
+          <a href="http://wiki.jokeru.ro/how-to-better-ssh-access-control.html">Better SSH access control</a>
+      </li>
+      <li class="post">
+          <a href="http://wiki.jokeru.ro/how-to-it-s-time-to-drop-wordpress-say-hello-to-my-pelican.html">It's time to drop WordPress, say hello to my Pelican</a>
+      </li>
+      <li class="post">
+          <a href="http://wiki.jokeru.ro/google-dns-down-18-march-2016.html">Google DNS Down - 18 March 2016</a>
+      </li>
+      <li class="post">
+          <a href="http://wiki.jokeru.ro/how-to-couchbase-install-error-on-openvz.html">Couchbase install error on OpenVZ</a>
+      </li>
+      <li class="post">
+          <a href="http://wiki.jokeru.ro/how-to-stay-low-dns.html">Stay Low - DNS</a>
       </li>
     </ul>
   </section>
@@ -108,7 +166,7 @@
 </aside>    </div>
   </div>
   <footer role="contentinfo"><p>
-    Copyright &copy;  2014  JoKeru &mdash;
+    Copyright &copy;  2011&ndash;2017  JoKeru &mdash;
   <span class="credit">Powered by <a href="http://getpelican.com">Pelican</a></span>
 </p></footer>
   <script src="http://wiki.jokeru.ro/theme/js/modernizr-2.0.js"></script>
@@ -134,6 +192,9 @@
 </script>
   <script type="text/javascript">
     var disqus_shortname = 'wiki-jokeru-ro';
+    var disqus_identifier = '/how-to-better-ssh-access-control.html';
+    var disqus_url = 'http://wiki.jokeru.ro/how-to-better-ssh-access-control.html';
+    var disqus_title = 'Better SSH access control';
     (function() {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
       dsq.src = "//" + disqus_shortname + '.disqus.com/embed.js';

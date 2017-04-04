@@ -1,5 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>wiki'd - sysadmin</title><link href="http://wiki.jokeru.ro/" rel="alternate"></link><link href="http://wiki.jokeru.ro/feeds/sysadmin.atom.xml" rel="self"></link><id>http://wiki.jokeru.ro/</id><updated>2016-04-04T21:30:00+01:00</updated><entry><title>It's time to drop WordPress, say hello to my Pelican</title><link href="http://wiki.jokeru.ro/how-to-it-s-time-to-drop-wordpress-say-hello-to-my-pelican.html" rel="alternate"></link><published>2016-04-04T21:30:00+01:00</published><updated>2016-04-04T21:30:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2016-04-04:/how-to-it-s-time-to-drop-wordpress-say-hello-to-my-pelican.html</id><summary type="html">&lt;h4&gt;Short story&lt;/h4&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>wiki'd - sysadmin</title><link href="http://wiki.jokeru.ro/" rel="alternate"></link><link href="http://wiki.jokeru.ro/feeds/sysadmin.atom.xml" rel="self"></link><id>http://wiki.jokeru.ro/</id><updated>2017-04-04T12:12:00+01:00</updated><entry><title>Better SSH access control</title><link href="http://wiki.jokeru.ro/how-to-better-ssh-access-control.html" rel="alternate"></link><published>2017-04-04T12:12:00+01:00</published><updated>2017-04-04T12:12:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2017-04-04:/how-to-better-ssh-access-control.html</id><summary type="html">&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;the only truly secure server is one that is powered off and stored in a concrete room with no doors or windows&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;SSH access to you instance is so last year, right now you just fire a new one and drop the old one.
+But if you insist in having …&lt;/p&gt;</summary><content type="html">&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;the only truly secure server is one that is powered off and stored in a concrete room with no doors or windows&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;SSH access to you instance is so last year, right now you just fire a new one and drop the old one.
+But if you insist in having SSH access, better make it safer (specially if your instance is publically exposed).&lt;/p&gt;
+&lt;p&gt;Username &amp;amp; password is bad, private keys are better but certificates the best.
+You just need to create a Root Certificate Authority that will be used to sign the access keys, in the signing process you are able to specify the user or hostname used for access and also an expiry date.&lt;/p&gt;
+&lt;h4&gt;Let's create the Root SSH CA (on your secure management server):&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;$&lt;/span&gt; ssh-keygen -b &lt;span class="m"&gt;4096&lt;/span&gt; -t rsa -f /etc/jokeru-ssh-ca -C &lt;span class="s2"&gt;&amp;quot;JoKeru SSH CA Key&amp;quot;&lt;/span&gt;
+&lt;span class="gp"&gt;#&lt;/span&gt; I recommand setting up a strong passphrase &lt;span class="k"&gt;for&lt;/span&gt; this key
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;Configure all instances to &lt;strong&gt;trust&lt;/strong&gt; the CA:&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; upload /etc/jokeru-ssh-ca.pub to /etc/ssh/ on all the instances
+&lt;span class="gp"&gt;$&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;TrustedUserCAKeys /etc/ssh/jokeru-ssh-ca.pub&amp;#39;&lt;/span&gt; &amp;gt;&amp;gt; /etc/ssh/sshd_config
+&lt;span class="gp"&gt;$&lt;/span&gt; /etc/init.d/ssh restart
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;Sign a user key and use it for login (on your secure management server):&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; create the user key &lt;span class="o"&gt;(&lt;/span&gt;no need &lt;span class="k"&gt;for&lt;/span&gt; passphrase here&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="gp"&gt;$&lt;/span&gt; ssh-keygen -b &lt;span class="m"&gt;4096&lt;/span&gt; -t rsa -f /home/j/.ssh/id_rsa
+
+&lt;span class="gp"&gt;#&lt;/span&gt; sign the key
+&lt;span class="gp"&gt;$&lt;/span&gt; ssh-keygen -s /etc/jokeru-ssh-ca -n noc -V +1d -I j@wiki /home/j/.ssh/id_rsa.pub
+&lt;span class="gp"&gt;#&lt;/span&gt; sets principal to &lt;span class="s2"&gt;&amp;quot;noc&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;target remote user to login&lt;span class="o"&gt;)&lt;/span&gt;, key is valid &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt; day, sets key identifier to &lt;span class="s2"&gt;&amp;quot;j@wiki&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;good &lt;span class="k"&gt;for&lt;/span&gt; logging/audit&lt;span class="o"&gt;}&lt;/span&gt;
+
+&lt;span class="gp"&gt;#&lt;/span&gt; view the signed certificate details
+&lt;span class="gp"&gt;$&lt;/span&gt; ssh-keygen -L -f /home/j/.ssh/id_rsa-cert.pub
+
+&lt;span class="gp"&gt;#&lt;/span&gt; connect using the key
+&lt;span class="gp"&gt;$&lt;/span&gt; ssh -i /home/j/.ssh/id_rsa noc@1.2.3.4
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href="https://ef.gy/hardening-ssh"&gt;https://ef.gy/hardening-ssh&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;</content><category term="linux"></category><category term="ssh"></category><category term="access"></category><category term="security"></category></entry><entry><title>It's time to drop WordPress, say hello to my Pelican</title><link href="http://wiki.jokeru.ro/how-to-it-s-time-to-drop-wordpress-say-hello-to-my-pelican.html" rel="alternate"></link><published>2016-04-04T21:30:00+01:00</published><updated>2016-04-04T21:30:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2016-04-04:/how-to-it-s-time-to-drop-wordpress-say-hello-to-my-pelican.html</id><summary type="html">&lt;h4&gt;Short story&lt;/h4&gt;
 &lt;p&gt;There is nothing more to say: WordPress is gone, Pelican is in.&lt;/p&gt;
 &lt;h4&gt;Long story&lt;/h4&gt;
 &lt;p&gt;Last year this wiki was running a self-hosted WordPress solution. But it got hacked.&lt;/p&gt;
