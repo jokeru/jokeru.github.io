@@ -1,5 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>wiki'd</title><link href="http://wiki.jokeru.ro/" rel="alternate"></link><link href="http://wiki.jokeru.ro/feeds/all.atom.xml" rel="self"></link><id>http://wiki.jokeru.ro/</id><updated>2017-04-04T12:12:00+01:00</updated><entry><title>Better SSH access control</title><link href="http://wiki.jokeru.ro/how-to-better-ssh-access-control.html" rel="alternate"></link><published>2017-04-04T12:12:00+01:00</published><updated>2017-04-04T12:12:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2017-04-04:/how-to-better-ssh-access-control.html</id><summary type="html">&lt;blockquote&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>wiki'd</title><link href="http://wiki.jokeru.ro/" rel="alternate"></link><link href="http://wiki.jokeru.ro/feeds/all.atom.xml" rel="self"></link><id>http://wiki.jokeru.ro/</id><updated>2017-06-02T17:07:00+01:00</updated><entry><title>Getting started with linkerd</title><link href="http://wiki.jokeru.ro/how-to-getting-started-with-linkerd.html" rel="alternate"></link><published>2017-06-02T17:07:00+01:00</published><updated>2017-06-02T17:07:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2017-06-02:/how-to-getting-started-with-linkerd.html</id><summary type="html">&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;linkerd is a transparent proxy that adds service discovery, routing, failure handling, and visibility to modern software applications&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I will not go into details about this product, I was just curious to see it in action.&lt;/p&gt;
+&lt;h4&gt;Running stuff these days is so easy:&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; get root
+&lt;span class="gp"&gt;$&lt;/span&gt; sudo su -
+
+&lt;span class="gp"&gt;#&lt;/span&gt; start docker
+&lt;span class="gp"&gt;$&lt;/span&gt; yum …&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;linkerd is a transparent proxy that adds service discovery, routing, failure handling, and visibility to modern software applications&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I will not go into details about this product, I was just curious to see it in action.&lt;/p&gt;
+&lt;h4&gt;Running stuff these days is so easy:&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; get root
+&lt;span class="gp"&gt;$&lt;/span&gt; sudo su -
+
+&lt;span class="gp"&gt;#&lt;/span&gt; start docker
+&lt;span class="gp"&gt;$&lt;/span&gt; yum install -y docker
+&lt;span class="gp"&gt;$&lt;/span&gt; /etc/init.d/docker start
+&lt;span class="gp"&gt;$&lt;/span&gt; pip install docker-compose
+
+&lt;span class="gp"&gt;#&lt;/span&gt; deploy linkerd setup
+&lt;span class="gp"&gt;$&lt;/span&gt; yum install -y git
+&lt;span class="gp"&gt;$&lt;/span&gt; git clone https://github.com/linkerd/linkerd-examples.git
+&lt;span class="gp"&gt;$&lt;/span&gt; &lt;span class="nb"&gt;cd&lt;/span&gt; linkerd-examples/getting-started/docker/
+&lt;span class="gp"&gt;$&lt;/span&gt; docker-compose up -d
+&lt;span class="gp"&gt;$&lt;/span&gt; docker ps -a
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;Send some requests to the proxy:&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;$&lt;/span&gt; curl -H &lt;span class="s2"&gt;&amp;quot;Host: hello&amp;quot;&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;:4140
+&lt;span class="gp"&gt;$&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; in in &lt;span class="k"&gt;$(&lt;/span&gt;seq &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="m"&gt;69&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; curl -H &lt;span class="s2"&gt;&amp;quot;Host: hello&amp;quot;&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;:4140&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;done&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;Check their cool admin interface&lt;/h4&gt;
+&lt;p&gt;http://{SERVER_IP}:9990&lt;/p&gt;
+&lt;h4&gt;Some docker useful commands&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; get inside the linkerd docker
+&lt;span class="gp"&gt;$&lt;/span&gt; docker &lt;span class="nb"&gt;exec&lt;/span&gt; -ti &lt;span class="k"&gt;$(&lt;/span&gt;docker ps &lt;span class="p"&gt;|&lt;/span&gt; grep linkerd &lt;span class="p"&gt;|&lt;/span&gt; awk &lt;span class="s1"&gt;&amp;#39;{print $1}&amp;#39;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt; /bin/bash
+
+&lt;span class="gp"&gt;#&lt;/span&gt; refresh the containers &lt;span class="o"&gt;(&lt;/span&gt;after you made changes to config files&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="gp"&gt;$&lt;/span&gt; docker stop &lt;span class="k"&gt;$(&lt;/span&gt;docker ps -a -q&lt;span class="k"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; docker rm &lt;span class="k"&gt;$(&lt;/span&gt;docker ps -a -q&lt;span class="k"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; docker-compose up -d
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href="https://linkerd.io/"&gt;https://linkerd.io/&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;</content><category term="linux"></category><category term="docker"></category><category term="linkerd"></category><category term="proxy"></category></entry><entry><title>Better SSH access control</title><link href="http://wiki.jokeru.ro/how-to-better-ssh-access-control.html" rel="alternate"></link><published>2017-04-04T12:12:00+01:00</published><updated>2017-04-04T12:12:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2017-04-04:/how-to-better-ssh-access-control.html</id><summary type="html">&lt;blockquote&gt;
 &lt;p&gt;&lt;em&gt;the only truly secure server is one that is powered off and stored in a concrete room with no doors or windows&lt;/em&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;SSH access to your instance is so last year, right now you just fire a new one and drop the old one.
