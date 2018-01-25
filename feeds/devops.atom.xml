@@ -1,55 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>wiki'd - devops</title><link href="http://wiki.jokeru.ro/" rel="alternate"></link><link href="http://wiki.jokeru.ro/feeds/devops.atom.xml" rel="self"></link><id>http://wiki.jokeru.ro/</id><updated>2017-06-02T17:07:00+01:00</updated><entry><title>Getting started with linkerd</title><link href="http://wiki.jokeru.ro/how-to-getting-started-with-linkerd.html" rel="alternate"></link><published>2017-06-02T17:07:00+01:00</published><updated>2017-06-02T17:07:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2017-06-02:/how-to-getting-started-with-linkerd.html</id><summary type="html">&lt;blockquote&gt;
-&lt;p&gt;&lt;em&gt;linkerd is a transparent proxy that adds service discovery, routing, failure handling, and visibility to modern software applications&lt;/em&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;I will not go into details about this product, I was just curious to see it in action.&lt;/p&gt;
-&lt;h4&gt;Running stuff these days is so easy:&lt;/h4&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; get root
-&lt;span class="gp"&gt;$&lt;/span&gt; sudo su -
-
-&lt;span class="gp"&gt;#&lt;/span&gt; start docker
-&lt;span class="gp"&gt;$&lt;/span&gt; yum …&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;blockquote&gt;
-&lt;p&gt;&lt;em&gt;linkerd is a transparent proxy that adds service discovery, routing, failure handling, and visibility to modern software applications&lt;/em&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;I will not go into details about this product, I was just curious to see it in action.&lt;/p&gt;
-&lt;h4&gt;Running stuff these days is so easy:&lt;/h4&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; get root
-&lt;span class="gp"&gt;$&lt;/span&gt; sudo su -
-
-&lt;span class="gp"&gt;#&lt;/span&gt; start docker
-&lt;span class="gp"&gt;$&lt;/span&gt; yum install -y docker
-&lt;span class="gp"&gt;$&lt;/span&gt; /etc/init.d/docker start
-&lt;span class="gp"&gt;$&lt;/span&gt; pip install docker-compose
-
-&lt;span class="gp"&gt;#&lt;/span&gt; deploy linkerd setup
-&lt;span class="gp"&gt;$&lt;/span&gt; yum install -y git
-&lt;span class="gp"&gt;$&lt;/span&gt; git clone https://github.com/linkerd/linkerd-examples.git
-&lt;span class="gp"&gt;$&lt;/span&gt; &lt;span class="nb"&gt;cd&lt;/span&gt; linkerd-examples/getting-started/docker/
-&lt;span class="gp"&gt;$&lt;/span&gt; docker-compose up -d
-&lt;span class="gp"&gt;$&lt;/span&gt; docker ps -a
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;h4&gt;Send some requests to the proxy:&lt;/h4&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;$&lt;/span&gt; curl -H &lt;span class="s2"&gt;&amp;quot;Host: hello&amp;quot;&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;:4140
-&lt;span class="gp"&gt;$&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; in in &lt;span class="k"&gt;$(&lt;/span&gt;seq &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="m"&gt;69&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; curl -H &lt;span class="s2"&gt;&amp;quot;Host: hello&amp;quot;&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;:4140&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;done&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;h4&gt;Check their cool admin interface&lt;/h4&gt;
-&lt;p&gt;http://{SERVER_IP}:9990&lt;/p&gt;
-&lt;h4&gt;Some docker useful commands&lt;/h4&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; get inside the linkerd docker
-&lt;span class="gp"&gt;$&lt;/span&gt; docker &lt;span class="nb"&gt;exec&lt;/span&gt; -ti &lt;span class="k"&gt;$(&lt;/span&gt;docker ps &lt;span class="p"&gt;|&lt;/span&gt; grep linkerd &lt;span class="p"&gt;|&lt;/span&gt; awk &lt;span class="s1"&gt;&amp;#39;{print $1}&amp;#39;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt; /bin/bash
-
-&lt;span class="gp"&gt;#&lt;/span&gt; refresh the containers &lt;span class="o"&gt;(&lt;/span&gt;after you made changes to config files&lt;span class="o"&gt;)&lt;/span&gt;
-&lt;span class="gp"&gt;$&lt;/span&gt; docker stop &lt;span class="k"&gt;$(&lt;/span&gt;docker ps -a -q&lt;span class="k"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; docker rm &lt;span class="k"&gt;$(&lt;/span&gt;docker ps -a -q&lt;span class="k"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; docker-compose up -d
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;blockquote&gt;
-&lt;p&gt;&lt;a href="https://linkerd.io/"&gt;https://linkerd.io/&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;</content><category term="microservices"></category><category term="soa"></category><category term="docker"></category><category term="linkerd"></category><category term="proxy"></category></entry><entry><title>Remove all AWS default VPCs using CLI</title><link href="http://wiki.jokeru.ro/how-to-remove-all-aws-default-vpcs-using-cli.html" rel="alternate"></link><published>2017-01-25T22:00:00+00:00</published><updated>2017-01-25T22:00:00+00:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2017-01-25:/how-to-remove-all-aws-default-vpcs-using-cli.html</id><summary type="html">&lt;p&gt;It's a good DevOps practice to have all your active infrastructure under your total control. Amazon creates for you a default VPC in every region they have, even though you'd probably use only one (or two for disaster recovery). Since this VPC was not created by your code, you cannot …&lt;/p&gt;</summary><content type="html">&lt;p&gt;It's a good DevOps practice to have all your active infrastructure under your total control. Amazon creates for you a default VPC in every region they have, even though you'd probably use only one (or two for disaster recovery). Since this VPC was not created by your code, you cannot maintain it. &lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>wiki'd - devops</title><link href="http://wiki.jokeru.ro/" rel="alternate"></link><link href="http://wiki.jokeru.ro/feeds/devops.atom.xml" rel="self"></link><id>http://wiki.jokeru.ro/</id><updated>2018-01-25T22:00:00+00:00</updated><entry><title>Remove all AWS default VPCs using CLI</title><link href="http://wiki.jokeru.ro/how-to-remove-all-aws-default-vpcs-using-cli.html" rel="alternate"></link><published>2018-01-25T22:00:00+00:00</published><updated>2018-01-25T22:00:00+00:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2018-01-25:/how-to-remove-all-aws-default-vpcs-using-cli.html</id><summary type="html">&lt;p&gt;It's a good DevOps practice to have all your active infrastructure under your total control. Amazon creates for you a default VPC in every region they have, even though you'd probably use only one (or two for disaster recovery). Since this VPC was not created by your code, you cannot …&lt;/p&gt;</summary><content type="html">&lt;p&gt;It's a good DevOps practice to have all your active infrastructure under your total control. Amazon creates for you a default VPC in every region they have, even though you'd probably use only one (or two for disaster recovery). Since this VPC was not created by your code, you cannot maintain it. &lt;/p&gt;
 &lt;p&gt;This also poses a security concern because the VPC has an Internet Gateway attached so you (or most probably someone else) could easily expose the entire account to the world.&lt;/p&gt;
 &lt;p&gt;So here's a bash script that will remove all the default VPCs across all regions using some simple AWS CLI commands (you also need to have &lt;code&gt;jq&lt;/code&gt; installed):&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env bash&lt;/span&gt;
@@ -119,4 +69,54 @@
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;You cannot have more than one default VPC per region.&lt;/p&gt;</content><category term="aws"></category><category term="best-practices"></category><category term="cloud"></category><category term="vpc"></category></entry></feed>
+&lt;p&gt;You cannot have more than one default VPC per region.&lt;/p&gt;</content><category term="aws"></category><category term="best-practices"></category><category term="cloud"></category><category term="vpc"></category></entry><entry><title>Getting started with linkerd</title><link href="http://wiki.jokeru.ro/how-to-getting-started-with-linkerd.html" rel="alternate"></link><published>2017-06-02T17:07:00+01:00</published><updated>2017-06-02T17:07:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2017-06-02:/how-to-getting-started-with-linkerd.html</id><summary type="html">&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;linkerd is a transparent proxy that adds service discovery, routing, failure handling, and visibility to modern software applications&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I will not go into details about this product, I was just curious to see it in action.&lt;/p&gt;
+&lt;h4&gt;Running stuff these days is so easy:&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; get root
+&lt;span class="gp"&gt;$&lt;/span&gt; sudo su -
+
+&lt;span class="gp"&gt;#&lt;/span&gt; start docker
+&lt;span class="gp"&gt;$&lt;/span&gt; yum …&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;linkerd is a transparent proxy that adds service discovery, routing, failure handling, and visibility to modern software applications&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I will not go into details about this product, I was just curious to see it in action.&lt;/p&gt;
+&lt;h4&gt;Running stuff these days is so easy:&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; get root
+&lt;span class="gp"&gt;$&lt;/span&gt; sudo su -
+
+&lt;span class="gp"&gt;#&lt;/span&gt; start docker
+&lt;span class="gp"&gt;$&lt;/span&gt; yum install -y docker
+&lt;span class="gp"&gt;$&lt;/span&gt; /etc/init.d/docker start
+&lt;span class="gp"&gt;$&lt;/span&gt; pip install docker-compose
+
+&lt;span class="gp"&gt;#&lt;/span&gt; deploy linkerd setup
+&lt;span class="gp"&gt;$&lt;/span&gt; yum install -y git
+&lt;span class="gp"&gt;$&lt;/span&gt; git clone https://github.com/linkerd/linkerd-examples.git
+&lt;span class="gp"&gt;$&lt;/span&gt; &lt;span class="nb"&gt;cd&lt;/span&gt; linkerd-examples/getting-started/docker/
+&lt;span class="gp"&gt;$&lt;/span&gt; docker-compose up -d
+&lt;span class="gp"&gt;$&lt;/span&gt; docker ps -a
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;Send some requests to the proxy:&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;$&lt;/span&gt; curl -H &lt;span class="s2"&gt;&amp;quot;Host: hello&amp;quot;&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;:4140
+&lt;span class="gp"&gt;$&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; in in &lt;span class="k"&gt;$(&lt;/span&gt;seq &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="m"&gt;69&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; curl -H &lt;span class="s2"&gt;&amp;quot;Host: hello&amp;quot;&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;:4140&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;done&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;Check their cool admin interface&lt;/h4&gt;
+&lt;p&gt;http://{SERVER_IP}:9990&lt;/p&gt;
+&lt;h4&gt;Some docker useful commands&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="gp"&gt;#&lt;/span&gt; get inside the linkerd docker
+&lt;span class="gp"&gt;$&lt;/span&gt; docker &lt;span class="nb"&gt;exec&lt;/span&gt; -ti &lt;span class="k"&gt;$(&lt;/span&gt;docker ps &lt;span class="p"&gt;|&lt;/span&gt; grep linkerd &lt;span class="p"&gt;|&lt;/span&gt; awk &lt;span class="s1"&gt;&amp;#39;{print $1}&amp;#39;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt; /bin/bash
+
+&lt;span class="gp"&gt;#&lt;/span&gt; refresh the containers &lt;span class="o"&gt;(&lt;/span&gt;after you made changes to config files&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="gp"&gt;$&lt;/span&gt; docker stop &lt;span class="k"&gt;$(&lt;/span&gt;docker ps -a -q&lt;span class="k"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; docker rm &lt;span class="k"&gt;$(&lt;/span&gt;docker ps -a -q&lt;span class="k"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; docker-compose up -d
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href="https://linkerd.io/"&gt;https://linkerd.io/&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;</content><category term="microservices"></category><category term="soa"></category><category term="docker"></category><category term="linkerd"></category><category term="proxy"></category></entry></feed>

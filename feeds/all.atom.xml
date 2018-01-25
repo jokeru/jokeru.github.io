@@ -1,5 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>wiki'd</title><link href="http://wiki.jokeru.ro/" rel="alternate"></link><link href="http://wiki.jokeru.ro/feeds/all.atom.xml" rel="self"></link><id>http://wiki.jokeru.ro/</id><updated>2017-06-02T17:07:00+01:00</updated><entry><title>Getting started with linkerd</title><link href="http://wiki.jokeru.ro/how-to-getting-started-with-linkerd.html" rel="alternate"></link><published>2017-06-02T17:07:00+01:00</published><updated>2017-06-02T17:07:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2017-06-02:/how-to-getting-started-with-linkerd.html</id><summary type="html">&lt;blockquote&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>wiki'd</title><link href="http://wiki.jokeru.ro/" rel="alternate"></link><link href="http://wiki.jokeru.ro/feeds/all.atom.xml" rel="self"></link><id>http://wiki.jokeru.ro/</id><updated>2018-01-25T22:00:00+00:00</updated><entry><title>Remove all AWS default VPCs using CLI</title><link href="http://wiki.jokeru.ro/how-to-remove-all-aws-default-vpcs-using-cli.html" rel="alternate"></link><published>2018-01-25T22:00:00+00:00</published><updated>2018-01-25T22:00:00+00:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2018-01-25:/how-to-remove-all-aws-default-vpcs-using-cli.html</id><summary type="html">&lt;p&gt;It's a good DevOps practice to have all your active infrastructure under your total control. Amazon creates for you a default VPC in every region they have, even though you'd probably use only one (or two for disaster recovery). Since this VPC was not created by your code, you cannot …&lt;/p&gt;</summary><content type="html">&lt;p&gt;It's a good DevOps practice to have all your active infrastructure under your total control. Amazon creates for you a default VPC in every region they have, even though you'd probably use only one (or two for disaster recovery). Since this VPC was not created by your code, you cannot maintain it. &lt;/p&gt;
+&lt;p&gt;This also poses a security concern because the VPC has an Internet Gateway attached so you (or most probably someone else) could easily expose the entire account to the world.&lt;/p&gt;
+&lt;p&gt;So here's a bash script that will remove all the default VPCs across all regions using some simple AWS CLI commands (you also need to have &lt;code&gt;jq&lt;/code&gt; installed):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env bash&lt;/span&gt;
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$AWS_PROFILE&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+  &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;No AWS_PROFILE set&amp;quot;&lt;/span&gt;
+  &lt;span class="nb"&gt;exit&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="k"&gt;fi&lt;/span&gt;
+
+
+&lt;span class="k"&gt;for&lt;/span&gt; region in &lt;span class="k"&gt;$(&lt;/span&gt;aws ec2 describe-regions --region eu-west-1 &lt;span class="p"&gt;|&lt;/span&gt; jq -r .Regions&lt;span class="o"&gt;[]&lt;/span&gt;.RegionName&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+
+  &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;* Region &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+
+  &lt;span class="c1"&gt;# get default vpc&lt;/span&gt;
+  &lt;span class="nv"&gt;vpc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;aws ec2 --region &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    describe-vpcs --filter &lt;span class="nv"&gt;Name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;isDefault,Values&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;true&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    &lt;span class="p"&gt;|&lt;/span&gt; jq -r .Vpcs&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;.VpcId&lt;span class="k"&gt;)&lt;/span&gt;
+
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;vpc&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;null&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;No default vpc found&amp;quot;&lt;/span&gt;
+    &lt;span class="k"&gt;continue&lt;/span&gt;
+  &lt;span class="k"&gt;fi&lt;/span&gt;
+  &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Found default vpc &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;vpc&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+
+  &lt;span class="c1"&gt;# get internet gateway&lt;/span&gt;
+  &lt;span class="nv"&gt;igw&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;aws ec2 --region &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    describe-internet-gateways --filter &lt;span class="nv"&gt;Name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;attachment.vpc-id,Values&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;vpc&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    &lt;span class="p"&gt;|&lt;/span&gt; jq -r .InternetGateways&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;.InternetGatewayId&lt;span class="k"&gt;)&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;igw&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; !&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;null&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Detaching internet gateway &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;igw&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+    aws ec2 --region &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+      detach-internet-gateway --internet-gateway-id &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;igw&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; --vpc-id &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;vpc&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Deleting internet gateway &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;igw&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+    aws ec2 --region &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+      delete-internet-gateway --internet-gateway-id &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;igw&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
+  &lt;span class="k"&gt;fi&lt;/span&gt;
+
+  &lt;span class="c1"&gt;# get subnets&lt;/span&gt;
+  &lt;span class="nv"&gt;subnets&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;aws ec2 --region &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    describe-subnets --filters &lt;span class="nv"&gt;Name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;vpc-id,Values&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;vpc&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    &lt;span class="p"&gt;|&lt;/span&gt; jq -r .Subnets&lt;span class="o"&gt;[]&lt;/span&gt;.SubnetId&lt;span class="k"&gt;)&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;subnets&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; !&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;null&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; subnet in &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;subnets&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+      &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Deleting subnet &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;subnet&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+      aws ec2 --region &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+        delete-subnet --subnet-id &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;subnet&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;done&lt;/span&gt;
+  &lt;span class="k"&gt;fi&lt;/span&gt;
+
+  &lt;span class="c1"&gt;# https://docs.aws.amazon.com/cli/latest/reference/ec2/delete-vpc.html&lt;/span&gt;
+  &lt;span class="c1"&gt;# - You can&amp;#39;t delete the main route table&lt;/span&gt;
+  &lt;span class="c1"&gt;# - You can&amp;#39;t delete the default network acl&lt;/span&gt;
+  &lt;span class="c1"&gt;# - You can&amp;#39;t delete the default security group&lt;/span&gt;
+
+  &lt;span class="c1"&gt;# delete default vpc&lt;/span&gt;
+  &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Deleting vpc &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;vpc&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+  aws ec2 --region &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    delete-vpc --vpc-id &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;vpc&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
+
+&lt;span class="k"&gt;done&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;So far I have not found a reason to restore the default VPC, but in case you need it:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;aws ec2 --region &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; create-default-vpc
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;You cannot have more than one default VPC per region.&lt;/p&gt;</content><category term="aws"></category><category term="best-practices"></category><category term="cloud"></category><category term="vpc"></category></entry><entry><title>Getting started with linkerd</title><link href="http://wiki.jokeru.ro/how-to-getting-started-with-linkerd.html" rel="alternate"></link><published>2017-06-02T17:07:00+01:00</published><updated>2017-06-02T17:07:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2017-06-02:/how-to-getting-started-with-linkerd.html</id><summary type="html">&lt;blockquote&gt;
 &lt;p&gt;&lt;em&gt;linkerd is a transparent proxy that adds service discovery, routing, failure handling, and visibility to modern software applications&lt;/em&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;I will not go into details about this product, I was just curious to see it in action.&lt;/p&gt;
@@ -91,77 +161,7 @@ You just need to create a Root Certificate Authority that will be used to sign t
 
 &lt;blockquote&gt;
 &lt;p&gt;&lt;a href="https://ef.gy/hardening-ssh"&gt;https://ef.gy/hardening-ssh&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;</content><category term="linux"></category><category term="ssh"></category><category term="access"></category><category term="security"></category></entry><entry><title>Remove all AWS default VPCs using CLI</title><link href="http://wiki.jokeru.ro/how-to-remove-all-aws-default-vpcs-using-cli.html" rel="alternate"></link><published>2017-01-25T22:00:00+00:00</published><updated>2017-01-25T22:00:00+00:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2017-01-25:/how-to-remove-all-aws-default-vpcs-using-cli.html</id><summary type="html">&lt;p&gt;It's a good DevOps practice to have all your active infrastructure under your total control. Amazon creates for you a default VPC in every region they have, even though you'd probably use only one (or two for disaster recovery). Since this VPC was not created by your code, you cannot …&lt;/p&gt;</summary><content type="html">&lt;p&gt;It's a good DevOps practice to have all your active infrastructure under your total control. Amazon creates for you a default VPC in every region they have, even though you'd probably use only one (or two for disaster recovery). Since this VPC was not created by your code, you cannot maintain it. &lt;/p&gt;
-&lt;p&gt;This also poses a security concern because the VPC has an Internet Gateway attached so you (or most probably someone else) could easily expose the entire account to the world.&lt;/p&gt;
-&lt;p&gt;So here's a bash script that will remove all the default VPCs across all regions using some simple AWS CLI commands (you also need to have &lt;code&gt;jq&lt;/code&gt; installed):&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env bash&lt;/span&gt;
-
-&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$AWS_PROFILE&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
-  &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;No AWS_PROFILE set&amp;quot;&lt;/span&gt;
-  &lt;span class="nb"&gt;exit&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;
-&lt;span class="k"&gt;fi&lt;/span&gt;
-
-
-&lt;span class="k"&gt;for&lt;/span&gt; region in &lt;span class="k"&gt;$(&lt;/span&gt;aws ec2 describe-regions --region eu-west-1 &lt;span class="p"&gt;|&lt;/span&gt; jq -r .Regions&lt;span class="o"&gt;[]&lt;/span&gt;.RegionName&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-
-  &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;* Region &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
-
-  &lt;span class="c1"&gt;# get default vpc&lt;/span&gt;
-  &lt;span class="nv"&gt;vpc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;aws ec2 --region &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
-    describe-vpcs --filter &lt;span class="nv"&gt;Name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;isDefault,Values&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;true&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
-    &lt;span class="p"&gt;|&lt;/span&gt; jq -r .Vpcs&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;.VpcId&lt;span class="k"&gt;)&lt;/span&gt;
-
-  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;vpc&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;null&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
-    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;No default vpc found&amp;quot;&lt;/span&gt;
-    &lt;span class="k"&gt;continue&lt;/span&gt;
-  &lt;span class="k"&gt;fi&lt;/span&gt;
-  &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Found default vpc &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;vpc&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
-
-  &lt;span class="c1"&gt;# get internet gateway&lt;/span&gt;
-  &lt;span class="nv"&gt;igw&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;aws ec2 --region &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
-    describe-internet-gateways --filter &lt;span class="nv"&gt;Name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;attachment.vpc-id,Values&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;vpc&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
-    &lt;span class="p"&gt;|&lt;/span&gt; jq -r .InternetGateways&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;.InternetGatewayId&lt;span class="k"&gt;)&lt;/span&gt;
-  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;igw&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; !&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;null&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
-    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Detaching internet gateway &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;igw&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
-    aws ec2 --region &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
-      detach-internet-gateway --internet-gateway-id &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;igw&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; --vpc-id &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;vpc&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
-    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Deleting internet gateway &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;igw&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
-    aws ec2 --region &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
-      delete-internet-gateway --internet-gateway-id &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;igw&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
-  &lt;span class="k"&gt;fi&lt;/span&gt;
-
-  &lt;span class="c1"&gt;# get subnets&lt;/span&gt;
-  &lt;span class="nv"&gt;subnets&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;aws ec2 --region &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
-    describe-subnets --filters &lt;span class="nv"&gt;Name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;vpc-id,Values&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;vpc&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
-    &lt;span class="p"&gt;|&lt;/span&gt; jq -r .Subnets&lt;span class="o"&gt;[]&lt;/span&gt;.SubnetId&lt;span class="k"&gt;)&lt;/span&gt;
-  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;subnets&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; !&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;null&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
-    &lt;span class="k"&gt;for&lt;/span&gt; subnet in &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;subnets&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-      &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Deleting subnet &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;subnet&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
-      aws ec2 --region &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
-        delete-subnet --subnet-id &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;subnet&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
-    &lt;span class="k"&gt;done&lt;/span&gt;
-  &lt;span class="k"&gt;fi&lt;/span&gt;
-
-  &lt;span class="c1"&gt;# https://docs.aws.amazon.com/cli/latest/reference/ec2/delete-vpc.html&lt;/span&gt;
-  &lt;span class="c1"&gt;# - You can&amp;#39;t delete the main route table&lt;/span&gt;
-  &lt;span class="c1"&gt;# - You can&amp;#39;t delete the default network acl&lt;/span&gt;
-  &lt;span class="c1"&gt;# - You can&amp;#39;t delete the default security group&lt;/span&gt;
-
-  &lt;span class="c1"&gt;# delete default vpc&lt;/span&gt;
-  &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Deleting vpc &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;vpc&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
-  aws ec2 --region &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
-    delete-vpc --vpc-id &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;vpc&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
-
-&lt;span class="k"&gt;done&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;So far I have not found a reason to restore the default VPC, but in case you need it:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;aws ec2 --region &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;region&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; create-default-vpc
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;You cannot have more than one default VPC per region.&lt;/p&gt;</content><category term="aws"></category><category term="best-practices"></category><category term="cloud"></category><category term="vpc"></category></entry><entry><title>It's time to drop WordPress, say hello to my Pelican</title><link href="http://wiki.jokeru.ro/how-to-it-s-time-to-drop-wordpress-say-hello-to-my-pelican.html" rel="alternate"></link><published>2016-04-04T21:30:00+01:00</published><updated>2016-04-04T21:30:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2016-04-04:/how-to-it-s-time-to-drop-wordpress-say-hello-to-my-pelican.html</id><summary type="html">&lt;h4&gt;Short story&lt;/h4&gt;
+&lt;/blockquote&gt;</content><category term="linux"></category><category term="ssh"></category><category term="access"></category><category term="security"></category></entry><entry><title>It's time to drop WordPress, say hello to my Pelican</title><link href="http://wiki.jokeru.ro/how-to-it-s-time-to-drop-wordpress-say-hello-to-my-pelican.html" rel="alternate"></link><published>2016-04-04T21:30:00+01:00</published><updated>2016-04-04T21:30:00+01:00</updated><author><name>jokeru</name></author><id>tag:wiki.jokeru.ro,2016-04-04:/how-to-it-s-time-to-drop-wordpress-say-hello-to-my-pelican.html</id><summary type="html">&lt;h4&gt;Short story&lt;/h4&gt;
 &lt;p&gt;There is nothing more to say: WordPress is gone, Pelican is in.&lt;/p&gt;
 &lt;h4&gt;Long story&lt;/h4&gt;
 &lt;p&gt;Last year this wiki was running a self-hosted WordPress solution. But it got hacked.&lt;/p&gt;
